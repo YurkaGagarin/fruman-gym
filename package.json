@@ -1,0 +1,13 @@
+{
+  "name": "fruman-gym",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Программа тренировок: сборка index.html и проверки на jsdom",
+  "scripts": {
+    "build": "python3 build.py",
+    "test": "node tests/basic.js && node tests/edge.js && node tests/progress.js && node tests/audio.js"
+  },
+  "devDependencies": {
+    "jsdom": "^29.1.1"
+  }
+}

@@ -1,0 +1,1698 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0F1115">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Icon Modiin">
+<link rel="apple-touch-icon" href="assets/icon.png">
+<link rel="icon" href="assets/icon.png">
+<title>Программа — Icon Fitness Модиин</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Narrow:wght@700&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0F1115;
+  --surface:#1A1E25;
+  --surface-2:#262C35;
+  --line:#697382;
+  --text:#FFFFFF;
+  --accent:#FF9147;
+  --accent-solid:#FF7A1A;
+  --on-accent:#14161A;
+  --radius:14px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:var(--bg)}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:'Archivo',system-ui,-apple-system,sans-serif;
+  font-size:16px;line-height:1.55;
+}
+/* every text block sits on its own painted surface — never on the page background */
+.page{background:var(--bg);min-height:100vh;padding-bottom:40px}
+.block{background:var(--surface);max-width:640px;margin:0 auto}
+.wrap{max-width:640px;margin:0 auto;padding:0 16px}
+
+header{padding:calc(28px + env(safe-area-inset-top)) 16px 24px;border-bottom:2px solid var(--accent-solid)}
+.eyebrow{
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin:0 0 10px;
+}
+h1{
+  font-family:'Archivo Narrow',sans-serif;font-weight:700;
+  font-size:clamp(30px,9vw,42px);line-height:1.03;text-transform:uppercase;
+  color:var(--text);margin:0 0 12px;
+}
+h1 em{font-style:normal;color:var(--accent)}
+.sub{color:var(--text);font-size:15px;font-weight:500;margin:0}
+.sub b{font-weight:700;color:var(--accent)}
+
+nav{position:sticky;top:0;padding-top:env(safe-area-inset-top);z-index:10;background:var(--bg);padding:10px 0;
+  border-bottom:1px solid var(--line)}
+.tabs{display:flex;gap:8px;max-width:640px;margin:0 auto;padding:0 16px}
+.tab{
+  flex:1;min-height:46px;appearance:none;cursor:pointer;
+  border:2px solid var(--line);background:var(--surface);color:var(--text);
+  font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:14px;
+  text-transform:uppercase;letter-spacing:.05em;padding:12px 4px;border-radius:10px;
+}
+.tab[aria-selected="true"]{background:var(--accent-solid);color:var(--on-accent);border-color:var(--accent-solid)}
+.tab:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+.dayhead{background:var(--surface);border-radius:var(--radius);padding:18px 16px;margin:16px 0 12px}
+.dayhead h2{
+  font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:26px;
+  line-height:1.1;text-transform:uppercase;color:var(--text);margin:0 0 8px;
+}
+.dayhead p{color:var(--text);font-size:15px;margin:0}
+
+.warmup{background:var(--surface);border-left:5px solid var(--accent-solid);
+  border-radius:0 var(--radius) var(--radius) 0;padding:16px;margin:0 0 12px}
+.warmup h3{
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0 0 8px;
+}
+.warmup p{margin:0;font-size:15px;color:var(--text)}
+
+.sectitle{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--accent);
+  margin:18px 0 10px;padding-left:2px}
+.card{background:var(--surface);border:2px solid var(--surface-2);
+  border-radius:var(--radius);padding:16px;margin:0 0 12px;cursor:pointer}
+.card:active{border-color:var(--accent-solid)}
+.card.focusme{border-color:var(--accent-solid);box-shadow:0 0 0 3px rgba(255,122,26,.35)}
+.card:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.a11y-open{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.a11y-open:focus{position:static;width:auto;height:auto;margin:8px 0 0;clip:auto;
+  min-height:44px;padding:8px 12px;background:var(--accent-solid);color:var(--on-accent);
+  border-radius:10px;font-family:'Archivo',sans-serif;font-weight:700}
+.card.done{border-color:var(--accent-solid)}
+
+.frame{position:relative;width:100%;aspect-ratio:4/3;border-radius:10px;
+  overflow:hidden;background:#FFFFFF;margin-bottom:14px}
+.frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#FFFFFF}
+.frame img.b{animation:flip 4s steps(1,end) infinite}
+@keyframes flip{0%,50%{opacity:0}50.01%,100%{opacity:1}}
+
+.card-top{display:flex;align-items:flex-start;gap:10px}
+.idx{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;
+  color:var(--accent);padding-top:5px;min-width:22px}
+.name{font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:20px;
+  line-height:1.15;text-transform:uppercase;color:var(--text);margin:0;flex:1}
+.load{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;
+  background:var(--surface-2);color:var(--accent);padding:6px 9px;border-radius:8px;white-space:nowrap}
+.cue{color:var(--text);font-size:15px;margin:12px 0 0}
+
+/* --- режим упражнения: всё помещается в высоту окна, без прокрутки --- */
+.exview{
+  position:fixed;left:0;right:0;top:0;bottom:0;z-index:42;
+  background:var(--bg);display:flex;flex-direction:column;overflow:hidden;
+  height:100vh;
+  transform:translateY(100%);transition:transform .28s cubic-bezier(.22,.61,.36,1);
+}
+@supports (height:100dvh){ .exview{height:100dvh} }
+.exview.up{transform:translateY(0)}
+.exview[hidden]{display:none}
+.exhead{
+  flex:0 0 auto;display:flex;align-items:center;gap:10px;
+  padding:calc(8px + env(safe-area-inset-top)) 14px 8px;
+  border-bottom:1px solid var(--surface-2);
+}
+.excount{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;
+  color:var(--accent);letter-spacing:.06em}
+.exday{font-family:'Archivo',sans-serif;font-size:12px;font-weight:600;color:var(--text);
+  flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.exclose{appearance:none;cursor:pointer;background:transparent;border:2px solid var(--text);
+  color:var(--text);border-radius:10px;min-width:44px;min-height:44px;font-size:20px;font-weight:700}
+
+.exbody{
+  flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:10px;
+  width:100%;max-width:640px;margin:0 auto;
+  padding:10px 14px calc(10px + env(safe-area-inset-bottom));
+}
+.exname{
+  flex:0 0 auto;margin:0;font-family:'Archivo Narrow',sans-serif;font-weight:700;
+  font-size:clamp(20px,6vw,30px);line-height:1.06;text-transform:uppercase;color:var(--text);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.exrow{flex:0 0 auto;display:flex;align-items:center;gap:10px}
+.exload{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:15px;
+  background:var(--accent-solid);color:var(--on-accent);padding:9px 12px;border-radius:10px;
+  white-space:nowrap}
+.exrow input{
+  flex:0 0 auto;width:96px;margin-left:auto;min-height:48px;padding:6px 8px;text-align:center;
+  background:var(--surface);border:2px solid var(--line);border-radius:12px;color:var(--text);
+  font-family:'JetBrains Mono',monospace;font-size:19px;font-weight:700;
+}
+.exrow input:focus{outline:3px solid var(--accent);outline-offset:2px;border-color:var(--accent)}
+.exrow .unit{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--text)}
+.exrow .unit[hidden], .exrow input[hidden]{display:none}
+.extimer{flex:1;min-height:48px;margin-left:auto;appearance:none;cursor:pointer;
+  background:transparent;border:2px solid var(--accent);color:var(--accent);border-radius:12px;
+  font-family:'Archivo',sans-serif;font-size:15px;font-weight:700}
+
+.exframe{
+  flex:1 1 auto;min-height:0;position:relative;width:100%;
+  border-radius:12px;overflow:hidden;background:#FFFFFF;border:2px solid var(--surface-2);
+}
+.exframe[hidden]{display:none}
+.exframe img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#FFFFFF}
+.exframe img.b{animation:flip 4s steps(1,end) infinite}
+
+.excue-btn{
+  flex:0 0 auto;appearance:none;cursor:pointer;width:100%;min-height:46px;
+  background:transparent;border:2px solid var(--accent);border-radius:12px;color:var(--accent);
+  font-family:'Archivo',sans-serif;font-size:15px;font-weight:700;
+}
+.excue-btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+.exsets[hidden]{display:none}
+.exsets{flex:0 0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(60px,1fr));gap:8px}
+.exset{
+  appearance:none;cursor:pointer;min-height:clamp(56px,9vh,78px);border-radius:14px;
+  background:var(--surface);border:3px solid var(--line);color:var(--text);
+  font-family:'Archivo Narrow',sans-serif;font-size:26px;font-weight:700;
+}
+.exset[aria-pressed="true"]{background:var(--accent-solid);border-color:var(--accent-solid);color:var(--on-accent)}
+.exset:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+.exnav{flex:0 0 auto;display:flex;gap:8px}
+.exnav button{min-height:clamp(48px,7vh,58px);appearance:none;cursor:pointer;border-radius:12px;
+  font-family:'Archivo',sans-serif;font-size:15px;font-weight:700}
+.exprev{flex:0 0 86px;background:transparent;color:var(--text);border:2px solid var(--text)}
+.exnext{flex:1;background:var(--accent-solid);color:var(--on-accent);border:0}
+.exnav button:disabled{opacity:.35;cursor:default}
+
+/* --- полноэкранный отсчёт --- */
+.tfull[hidden]{display:none}
+.tfull{
+  position:fixed;left:0;right:0;top:0;bottom:0;z-index:45;background:var(--bg);
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+  height:100vh;
+  padding:16px 20px calc(16px + env(safe-area-inset-bottom));
+}
+@supports (height:100dvh){ .tfull{height:100dvh} }
+.tfull-inner{width:100%;max-width:420px;text-align:center}
+.tphase{
+  font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--accent);
+  margin:0 0 14px;min-height:30px;line-height:1.3;
+}
+.tring{position:relative;width:min(70vw,46vh,300px);aspect-ratio:1;margin:0 auto}
+.tring svg{width:100%;height:100%;transform:rotate(-90deg);display:block}
+.trbg{fill:none;stroke:var(--surface-2);stroke-width:14}
+.trfg{fill:none;stroke:var(--accent-solid);stroke-width:14;stroke-linecap:round;
+  transition:stroke-dashoffset .2s linear}
+.tfull.warn .trfg{stroke:#FFFFFF}
+.tbig{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:'JetBrains Mono',monospace;font-weight:700;
+  font-size:clamp(38px,13vw,64px);color:var(--text);letter-spacing:-.02em;
+}
+.tnext{font-size:14px;font-weight:600;color:var(--text);margin:14px 0 0;min-height:20px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tactions{display:flex;gap:10px;margin-top:18px}
+.tactions button{
+  flex:1;min-height:clamp(48px,7vh,58px);appearance:none;cursor:pointer;border-radius:12px;
+  font-family:'Archivo',sans-serif;font-size:16px;font-weight:700;
+}
+#fplus{background:transparent;color:var(--text);border:2px solid var(--text)}
+#fstop{background:var(--accent-solid);color:var(--on-accent);border:0}
+.tmin{
+  margin-top:10px;width:100%;min-height:44px;appearance:none;cursor:pointer;
+  background:transparent;border:0;color:var(--accent);
+  font-family:'Archivo',sans-serif;font-size:15px;font-weight:600;
+  border-bottom:2px dotted var(--accent);
+}
+.tfull button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* --- таймер --- */
+.tbar[hidden]{display:none}
+.tbar{
+  position:fixed;left:0;right:0;bottom:0;z-index:40;
+  background:var(--surface);border-top:2px solid var(--accent-solid);
+  padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+  display:flex;align-items:center;gap:8px;
+}
+.tbar.run{background:var(--accent-solid);border-top-color:var(--accent-solid);cursor:pointer}
+.tbar.run:active{filter:brightness(.92)}
+.tbar.run .tbtn{border-color:var(--on-accent);color:var(--on-accent)}
+.tbar.done{animation:flash 0.5s steps(1,end) 6}
+@keyframes flash{0%{background:var(--accent-solid)}50%{background:var(--surface)}}
+.tdisp{
+  font-family:'JetBrains Mono',monospace;font-weight:700;font-size:26px;
+  color:var(--text);min-width:92px;text-align:center;letter-spacing:.02em;
+}
+.tbar.run .tdisp{color:var(--on-accent)}
+.tlabel{font-family:'Archivo',sans-serif;font-size:13px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.05em;color:var(--text);flex:1;line-height:1.15}
+.tbar.run .tlabel{color:var(--on-accent)}
+.tbtn{
+  appearance:none;cursor:pointer;background:transparent;
+  border:2px solid var(--line);color:var(--text);border-radius:10px;
+  font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;
+  padding:0 10px;min-height:44px;min-width:48px;
+}
+.tbtn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.hold{
+  appearance:none;cursor:pointer;
+  background:transparent;border:2px solid var(--accent);color:var(--accent);
+  border-radius:10px;min-height:44px;padding:0 14px;
+  font-family:'Archivo',sans-serif;font-size:14px;font-weight:700;
+}
+.wu-start{
+  appearance:none;cursor:pointer;margin-top:12px;width:100%;
+  background:transparent;border:2px solid var(--accent-solid);color:var(--text);
+  border-radius:10px;min-height:48px;
+  font-family:'Archivo',sans-serif;font-size:15px;font-weight:700;
+}
+.log{display:flex;align-items:center;gap:10px;margin-top:12px;padding-top:12px;
+  border-top:1px solid var(--surface-2);flex-wrap:wrap}
+.log label{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--text)}
+.log input{
+  width:96px;min-height:46px;padding:8px 12px;
+  background:var(--surface-2);border:2px solid var(--line);border-radius:10px;
+  color:var(--text);font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;
+  text-align:center;
+}
+.log input:focus{outline:3px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.log input.filled{border-color:var(--accent-solid)}
+.last{appearance:none;background:transparent;border:0;padding:6px 2px;margin-left:auto;
+  color:var(--accent);font-family:'Archivo',sans-serif;font-size:13px;font-weight:600;
+  cursor:pointer;text-align:right;border-bottom:2px dotted var(--accent)}
+.last.empty{color:var(--text);border-bottom:0;cursor:default}
+.progline{display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  background:var(--surface);border-radius:var(--radius);padding:14px 16px;margin-top:16px}
+.progline span{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--text);flex:1;line-height:1.4}
+.finish{appearance:none;cursor:pointer;min-height:44px;padding:0 16px;
+  background:var(--accent-solid);color:var(--on-accent);border:0;border-radius:10px;
+  font-family:'Archivo',sans-serif;font-size:14px;font-weight:700}
+.finish[hidden]{display:none}
+.tab.now::after{content:'●';margin-left:6px;font-size:9px;vertical-align:middle}
+.banner{background:var(--accent-solid);color:var(--on-accent);border-radius:10px;
+  padding:12px 14px;margin:12px 0 0;font-size:14px;font-weight:600}
+.banner.ok{background:var(--surface);color:var(--text);border:2px solid var(--accent-solid)}
+.banner.err{background:#FFFFFF;color:#8A1500;border:2px solid #8A1500;
+  font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.4;font-weight:700}
+.stat{display:inline-flex;align-items:center;gap:6px;margin-top:10px;
+  font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;padding:5px 9px;border-radius:6px}
+.stat.ok{background:var(--surface-2);color:var(--text);border:1px solid var(--line)}
+.stat.check{background:var(--accent-solid);color:var(--on-accent)}
+
+.card-bottom{display:flex;align-items:center;gap:12px;margin-top:14px;
+  padding-top:14px;border-top:1px solid var(--surface-2);min-height:48px}
+
+.notes{border-radius:var(--radius);padding:22px 16px;margin-top:20px}
+.notes h2{font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:24px;
+  text-transform:uppercase;color:var(--text);margin:0 0 16px}
+.note{margin:0 0 18px}
+.note:last-child{margin-bottom:0}
+.note h4{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+  letter-spacing:.13em;text-transform:uppercase;color:var(--accent);margin:0 0 5px}
+.note p{margin:0;font-size:15px;color:var(--text)}
+.note p b{font-weight:700;color:var(--accent)}
+
+footer{border-radius:var(--radius);padding:20px 16px;margin-top:12px;color:var(--text)}
+footer p{margin:0 0 6px;font-size:13px}
+.cfg{margin-top:18px;padding-top:16px;border-top:1px solid var(--surface-2)}
+.cfg h4{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+  letter-spacing:.13em;text-transform:uppercase;color:var(--accent);margin:0 0 8px}
+.cfg p{margin:0 0 12px;font-size:13px;color:var(--text)}
+.toggle{
+  width:100%;min-height:52px;appearance:none;cursor:pointer;
+  display:flex;align-items:center;gap:10px;text-align:left;
+  background:var(--surface-2);border:2px solid var(--line);border-radius:10px;
+  color:var(--text);font-family:'Archivo',sans-serif;font-size:15px;font-weight:600;padding:10px 14px;
+}
+.toggle[aria-pressed="true"]{border-color:var(--accent-solid)}
+.toggle .dotmark{width:20px;height:20px;border-radius:50%;border:2px solid var(--text);flex:0 0 auto}
+.toggle[aria-pressed="true"] .dotmark{background:var(--accent-solid);border-color:var(--accent-solid)}
+.cfg input{
+  width:100%;min-height:48px;margin-top:10px;padding:10px 14px;
+  background:var(--surface-2);border:2px solid var(--line);border-radius:10px;
+  color:var(--text);font-family:'Archivo',sans-serif;font-size:16px;
+}
+.reset{appearance:none;background:transparent;border:2px solid var(--text);
+  color:var(--text);border-radius:10px;padding:12px 16px;cursor:pointer;
+  font-family:'Archivo',sans-serif;font-size:14px;font-weight:600;
+  margin-top:12px;min-height:46px}
+.reset:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* --- подсвеченные термины --- */
+.term{
+  appearance:none;background:transparent;border:0;padding:0;margin:0;
+  font:inherit;color:var(--accent);cursor:pointer;
+  border-bottom:2px dotted var(--accent);line-height:inherit;
+}
+.term:active{background:rgba(255,122,26,.22)}
+.term:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:3px}
+
+/* --- карточка термина --- */
+.sheet[hidden]{display:none}
+.sheet{position:fixed;inset:0;z-index:50;display:flex;align-items:flex-end;justify-content:center}
+.sheet-back{position:absolute;inset:0;background:rgba(0,0,0,.72)}
+.sheet-card{
+  position:relative;width:100%;max-width:640px;max-height:88vh;overflow-y:auto;
+  background:var(--surface);border-top:4px solid var(--accent-solid);
+  border-radius:18px 18px 0 0;padding:20px 16px calc(20px + env(safe-area-inset-bottom));
+}
+.sheet-card img{width:100%;aspect-ratio:4/3;object-fit:contain;border-radius:10px;
+  background:#FFFFFF;margin-bottom:14px;display:block}
+.sheet-card img[hidden]{display:none}
+.sheet-card img.photo{object-fit:cover;background:var(--surface-2)}
+.sheet-card h3{font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:24px;
+  line-height:1.15;text-transform:uppercase;color:var(--text);margin:0 0 10px}
+.sheet-card p{margin:0;font-size:16px;color:var(--text);white-space:pre-line}
+#sheetInput{width:100%;margin-top:12px;padding:12px;border-radius:10px;
+  background:var(--surface-2);border:2px solid var(--line);color:var(--text);
+  font-family:'JetBrains Mono',monospace;font-size:14px;resize:vertical}
+#sheetInput[hidden]{display:none}
+.sheet-load{width:100%;min-height:50px;margin-top:12px;appearance:none;cursor:pointer;
+  background:transparent;color:var(--text);border:2px solid var(--text);border-radius:12px;
+  font-family:'Archivo',sans-serif;font-size:16px;font-weight:700}
+.sheet-load[hidden]{display:none}
+.sheet-close{
+  width:100%;min-height:50px;margin-top:18px;appearance:none;cursor:pointer;
+  background:var(--accent-solid);color:var(--on-accent);border:0;border-radius:12px;
+  font-family:'Archivo',sans-serif;font-size:16px;font-weight:700;
+}
+.sheet-close:focus-visible{outline:3px solid var(--text);outline-offset:2px}
+
+/* --- глоссарий списком --- */
+.gloss{border-radius:var(--radius);padding:22px 16px;margin-top:12px}
+.gloss h2{font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:24px;
+  text-transform:uppercase;color:var(--text);margin:0 0 6px}
+.gloss .hint{font-size:14px;color:var(--text);margin:0 0 16px}
+.gloss h3{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+  letter-spacing:.13em;text-transform:uppercase;color:var(--accent);margin:18px 0 10px}
+.gloss h3:first-of-type{margin-top:0}
+.gloss-item{
+  display:flex;align-items:center;gap:12px;width:100%;min-height:52px;
+  appearance:none;cursor:pointer;text-align:left;
+  background:var(--surface-2);border:2px solid var(--surface-2);border-radius:10px;
+  color:var(--text);font-family:'Archivo',sans-serif;font-size:15px;font-weight:600;
+  padding:12px 14px;margin-bottom:8px;
+}
+.gloss-item:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.gloss-item .chev{margin-left:auto;color:var(--accent);font-weight:700}
+
+@media (prefers-reduced-motion:reduce){
+  .frame img.b{animation:none;opacity:1;left:50%;width:50%}
+  .frame img.a{left:0;width:50%}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="block">
+    <p class="eyebrow">Icon Fitness Модиин · Technogym</p>
+    <h1>Грудь, плечи,<br><em>руки</em></h1>
+    <p class="sub">3 раза в неделю · около <b>80 минут</b> · отдых <b>60–90 сек</b> · между тренировками минимум <b>один день</b></p>
+  </header>
+
+  <nav>
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" aria-selected="true" data-day="0">День 1</button>
+      <button class="tab" role="tab" aria-selected="false" data-day="1">День 2</button>
+      <button class="tab" role="tab" aria-selected="false" data-day="2">День 3</button>
+    </div>
+  </nav>
+
+  <div class="wrap">
+    <div class="progline">
+      <span id="progline">Идёт день 1</span>
+      <button class="finish" id="finishDay" type="button" hidden>Завершить день</button>
+    </div>
+    <p class="banner" id="banner" hidden></p>
+  </div>
+
+  <main class="wrap" id="app"></main>
+
+  <section class="wrap">
+    <div class="notes block">
+      <h2>Что решает результат</h2>
+      <div class="note">
+        <h4>Метки на карточках</h4>
+        <p><b>Тренажёр подтверждён</b> — я видел его на твоих фото и знаю, где он стоит. <b>Проверить в зале</b> — упражнение в программе оставлено, но железку я на снимках не нашёл. Скинь фото — сниму метку или заменю упражнение.</p>
+      </div>
+      <div class="note">
+        <h4>Прогрессия</h4>
+        <p>Сделал верхнюю границу повторов во <b>всех</b> подходах — в следующий раз добавь вес. Без этого программа перестаёт работать примерно через месяц.</p>
+      </div>
+      <div class="note">
+        <h4>Живот</h4>
+        <p>Пресс есть у всех, вопрос в жире поверх него. Упражнения решают форму, плоскость решает <b>дефицит калорий</b> и белок около <b>1,6 г на кг веса</b>.</p>
+      </div>
+      <div class="note">
+        <h4>Без отказа</h4>
+        <p>Оставляй <b>1–2 повтора в запасе</b>. Это режим, который даёт подъём настроения и энергию, а не выжатость и сорванное восстановление.</p>
+      </div>
+      <div class="note">
+        <h4>Плечи</h4>
+        <p>После 40 плечевой сустав — первое узкое место в жимовой работе. Разминка на плечи не опциональна, а жимы над головой — только гантелями или в тренажёре.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="gloss block">
+      <h2>Глоссарий</h2>
+      <p class="hint">Термины в тексте подчёркнуты точками — нажми на любой. Здесь то же самое списком.</p>
+      <div id="glossList"></div>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <footer class="block">
+      <p>Картинки показывают начальную и конечную фазу движения и меняются автоматически.</p>
+      <p>Отметки подходов сбрасываются при перезагрузке страницы.</p>
+      <button class="reset" id="reset" type="button">Сбросить отметки подходов</button>
+      <button class="reset" id="export" type="button">Показать весь журнал весов</button>
+      <button class="reset" id="backup" type="button">Скопировать журнал</button>
+      <button class="reset" id="restore" type="button">Вставить журнал</button>
+      <button class="reset" id="netcheck" type="button">Проверить связь с интернетом</button>
+
+      <div class="cfg">
+        <h4>Таймер телефона</h4>
+        <p>Встроенный отсчёт звучит только пока страница открыта. Системный таймер сработает и при заблокированном экране — но для этого нужна быстрая команда, см. «Как настроить».</p>
+        <button class="toggle" id="extToggle" type="button" aria-pressed="false">
+          <span class="dotmark" aria-hidden="true"></span>
+          <span id="extLabel">Отдавать отсчёт таймеру телефона — выключено</span>
+        </button>
+        <input id="extName" type="text" value="Отдых" aria-label="Название быстрой команды">
+        <button class="reset" id="extHelp" type="button">Как настроить</button>
+      </div>
+    </footer>
+  </section>
+
+  <div class="exview" id="exview" hidden>
+    <div class="exhead">
+      <span class="excount" id="excount">01 / 07</span>
+      <span class="exday" id="exday"></span>
+      <button class="exclose" id="exclose" type="button" aria-label="Закрыть">×</button>
+    </div>
+    <div class="exbody">
+      <h2 class="exname" id="exname"></h2>
+      <div class="exrow">
+        <span class="exload" id="exload"></span>
+        <input id="exweight" type="text" inputmode="decimal" placeholder="вес" aria-label="Рабочий вес в килограммах">
+        <span class="unit">кг</span>
+      </div>
+      <div class="exframe" id="exframe">
+        <img class="a" id="eximgA" alt="">
+        <img class="b" id="eximgB" alt="">
+      </div>
+      <button class="excue-btn" id="excue" type="button">Как выполнять</button>
+      <div class="exsets" id="exsets"></div>
+      <div class="exnav">
+        <button class="exprev" id="exprev" type="button">Назад</button>
+        <button class="exnext" id="exnext" type="button">Дальше</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tfull" id="tfull" hidden>
+    <div class="tfull-inner">
+      <p class="tphase" id="tphase">отдых</p>
+      <div class="tring">
+        <svg viewBox="0 0 240 240" aria-hidden="true">
+          <circle class="trbg" cx="120" cy="120" r="108"></circle>
+          <circle class="trfg" id="trfg" cx="120" cy="120" r="108"></circle>
+        </svg>
+        <span class="tbig" id="tbig">00:00</span>
+      </div>
+      <p class="tnext" id="tnext"></p>
+      <div class="tactions">
+        <button id="fplus" type="button">+30 сек</button>
+        <button id="fstop" type="button">Стоп</button>
+      </div>
+      <button class="tmin" id="fmin" type="button">Свернуть и смотреть программу</button>
+    </div>
+  </div>
+
+  <div class="tbar" id="tbar" hidden>
+    <span class="tdisp" id="tdisp">--:--</span>
+    <span class="tlabel" id="tlabel">таймер</span>
+    <button class="tbtn" id="tplus" type="button">+30</button>
+    <button class="tbtn" id="tstop" type="button">стоп</button>
+  </div>
+
+  <div class="sheet" id="sheet" hidden>
+    <div class="sheet-back" data-close></div>
+    <div class="sheet-card" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+      <img id="sheetImg" alt="" hidden>
+      <h3 id="sheetTitle"></h3>
+      <p id="sheetText"></p>
+      <textarea id="sheetInput" hidden rows="5" aria-label="Вставь сюда скопированный журнал"></textarea>
+      <button class="sheet-load" id="sheetLoad" type="button" hidden>Загрузить</button>
+      <button class="sheet-close" type="button" data-close>Понятно</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const IMG_KEYS = ["Arm_Circles", "Band_Pull_Apart", "Bicycling_Stationary", "Butterfly", "Cable_Crossover", "Cable_Crunch", "Cable_Hammer_Curls_-_Rope_Attachment", "Dips_-_Chest_Version", "Dumbbell_Shoulder_Press", "Elliptical_Trainer", "Face_Pull", "Hammer_Curls", "Hanging_Leg_Raise", "Incline_Dumbbell_Press", "Leg_Press", "Leverage_Chest_Press", "Machine_Bicep_Curl", "One-Arm_Dumbbell_Row", "Plank", "Reverse_Machine_Flyes", "Rowing_Stationary", "Seated_Cable_Rows", "Shoulder_Circles", "Side_Lateral_Raise", "Triceps_Pushdown_-_Rope_Attachment", "Walking_Treadmill", "Wide-Grip_Lat_Pulldown"];
+const IMG = {};
+IMG_KEYS.forEach(k => { IMG[k] = ['assets/exercises/' + k + '_0.jpg', 'assets/exercises/' + k + '_1.jpg']; });
+const DAYS = [{"title": "Грудь · плечи · трицепс", "focus": "Главный день по твоим приоритетам. Верх груди и средняя дельта — то, что видно в футболке. В конце 20 минут кардио.", "ex": [{"n": "Кардио в лёгком темпе", "l": "1 × 8 мин", "t": 480, "img": "Elliptical_Trainer", "s": "ok", "c": "Дорожка, эллипс или велотренажёр. Темп разговорный: прогреть тело, а не устать. Пульс поднимается плавно.", "w": 1}, {"n": "Вращения плечами", "l": "1 × 20", "t": 60, "img": "Arm_Circles", "s": "ok", "c": "Круги руками вперёд и назад, амплитуда от малой к большой. Готовит плечевой сустав к жимам — сегодня их три.", "w": 1}, {"n": "Разведение с резиной", "l": "1 × 15", "t": 45, "img": "Band_Pull_Apart", "s": "ok", "c": "Резина перед собой на прямых руках, разводишь до касания груди, сводя лопатки. Включает заднюю дельту, которая держит плечо в жиме.", "w": 1}, {"n": "Жим гантелей на наклонной 30°", "l": "4 × 8–12", "c": "Спинку регулируемой скамьи подними на 1–2 ступени от горизонтали, это и есть нужные 30 градусов. Круче — и работу забирают плечи вместо верха груди.", "img": "Incline_Dumbbell_Press", "s": "ok", "rest": 90}, {"n": "Chest press Technogym", "l": "3 × 10–12", "c": "Отрегулируй сиденье жёлтым рычагом так, чтобы рукоятки были на уровне середины груди. Спина плотно к спинке.", "img": "Leverage_Chest_Press", "s": "ok", "rest": 90}, {"n": "Бабочка (пек-дек)", "l": "3 × 12–15", "c": "Двойная машина с наклейками PECTORAL и REVERSE FLY — садись со стороны PECTORAL. Добивающее на растяжение: локти чуть согнуты и зафиксированы, вес небольшой, в сведении задержка на секунду.", "img": "Butterfly", "s": "ok", "rest": 60}, {"n": "Жим гантелей сидя, спинка 75–80°", "l": "3 × 10–12", "c": "Берёшь гантели с ряда — никаких блинов. Спинку скамьи почти вертикально, но не до упора: лёгкий наклон назад разгружает плечевой сустав. Гантели вверху не сталкивать, локти не уводить за линию корпуса.", "img": "Dumbbell_Shoulder_Press", "s": "ok", "rest": 90}, {"n": "Махи гантелями в стороны", "l": "4 × 15–20", "c": "Главный рычаг ширины плеч. Отдельного тренажёра для махов в зале нет, берёшь лёгкие гантели с хромированной стойки — там шаг в один килограмм. Ведёшь локтем, без раскачки корпусом.", "img": "Side_Lateral_Raise", "s": "ok", "rest": 60}, {"n": "Трицепс на блоке с канатом", "l": "3 × 12–15", "c": "Канат на мультистанции. Локти прижаты к бокам и неподвижны, внизу разводишь концы каната в стороны.", "img": "Triceps_Pushdown_-_Rope_Attachment", "s": "ok", "rest": 60}, {"n": "Планка", "l": "3 × 45 сек", "c": "Таз подкручен, поясница не провисает. Лучше 30 честных секунд, чем 60 с прогибом.", "img": "Plank", "s": "ok", "rest": 60, "hold": 45}, {"n": "Кардио в спокойном темпе", "l": "1 × 20 мин", "c": "Дорожка, эллипс или велотренажёр. Темп такой, что говорить можешь, а петь уже нет. Силовым это не мешает и на восстановление не влияет.", "img": "Walking_Treadmill", "s": "ok", "rest": 60, "t": 1200}]}, {"title": "Спина · бицепс · пресс", "focus": "День осанки. Сильная спина разворачивает плечи назад и визуально выкатывает грудь вперёд — работает на внешний вид не меньше жимов. В конце 20 минут кардио.", "ex": [{"n": "Кардио на гребном", "l": "1 × 6 мин", "t": 360, "img": "Rowing_Stationary", "s": "ok", "c": "Гребной тренажёр. Главная цифра на экране — SPM (гребки в минуту).\n\n• SPM 18–20. Последнюю минуту можно 22, выше — это уже не разминка.\n• Пульс до 115–120.\n• Проверка: можешь говорить фразами, не задыхаясь.\n• Ритм: «раз» — толчок ногами, «два-три» — медленный возврат. Возврат вдвое дольше толчка, это и даёт 20 SPM.\n• Темп /500м не гони. На 18–20 SPM он секунд на 20–25 медленнее, чем на 28. Держи SPM, темп подтянется сам.\n• 24–28 SPM — темповая зона, 28–32 — пороговая. Это для кардиоблока в конце тренировки, не для начала.", "w": 1}, {"n": "Вращения плечами", "l": "1 × 20", "t": 60, "img": "Shoulder_Circles", "s": "ok", "c": "Круги плечами вперёд и назад. Разогревает лопатки перед тягами.", "w": 1}, {"n": "Лёгкая тяга блока", "l": "1 × 12", "t": 60, "img": "Wide-Grip_Lat_Pulldown", "s": "ok", "c": "Разминочный подход: половина рабочего веса, движение чистое и медленное. Напоминает мышце траекторию.", "w": 1}, {"n": "Тяга верхнего блока широким хватом", "l": "4 × 10–12", "c": "Тренажёр с наклейкой LAT MACHINE, их два у стены. Бёдра под валики, тянешь к верху груди, грудь навстречу рукоятке, не отклоняйся сильно назад.", "img": "Wide-Grip_Lat_Pulldown", "s": "ok", "rest": 90}, {"n": "Тяга сидя на нижнем блоке", "l": "3 × 10–12", "c": "Нижняя тяга на мультистанции. В конце движения сводишь лопатки, корпус держишь неподвижно.", "img": "Seated_Cable_Rows", "s": "ok", "rest": 90}, {"n": "Тяга гантели в наклоне, одной рукой", "l": "3 × 10–12", "c": "Опора коленом и рукой о скамью, спина прямая, тянешь к поясу, а не к плечу.", "img": "One-Arm_Dumbbell_Row", "s": "ok", "rest": 90}, {"n": "Обратные разведения в тренажёре", "l": "3 × 15", "c": "Та же машина, что и бабочка, только сторона REVERSE FLY: садишься лицом к спинке и разводишь руки назад. Задняя дельта делает плечо круглым сзади. Вес лёгкий, в конце сводишь лопатки.", "img": "Reverse_Machine_Flyes", "s": "ok", "rest": 60}, {"n": "Бицепс в тренажёре Arm Curl", "l": "3 × 10–12", "c": "Technogym с наклейкой ARM CURL, вес штырьком. Садишься так, чтобы подушки оказались позади локтей и упирались в заднюю поверхность плеча. Кисти на нижних рукоятках, сгибаешь руки к себе, внизу не выпрямляй до конца.", "img": "Machine_Bicep_Curl", "s": "ok", "rest": 60}, {"n": "«Молоток» с гантелями", "l": "3 × 10–12", "c": "Нейтральный хват. Даёт толщину руке сбоку — то, что видно в коротком рукаве.", "img": "Hammer_Curls", "s": "ok", "rest": 60}, {"n": "Подъём ног в упоре", "l": "3 × 12–15", "c": "Стойка с наклейкой CHIN UP / DIP / LEG RAISE. Спина прижата, поднимаешь тазом, а не только ногами, без раскачки.", "img": "Hanging_Leg_Raise", "s": "ok", "rest": 60}, {"n": "Кардио в спокойном темпе", "l": "1 × 20 мин", "c": "Гребной тренажёр или эллипс. Ровный темп, без ускорений — сегодня уже поработал с весами. Гребля здесь — 24–28 SPM.", "img": "Elliptical_Trainer", "s": "ok", "rest": 60, "t": 1200}]}, {"title": "Грудь · плечи · руки · пресс", "focus": "Второй заход по твоим приоритетам: грудь, плечи, руки и пресс. Плюс спина для осанки, в конце интервалы и заминка.", "ex": [{"n": "Кардио на велотренажёре", "l": "1 × 8 мин", "t": 480, "img": "Bicycling_Stationary", "s": "ok", "c": "Велотренажёр. Главная цифра на экране — RPM (обороты педалей в минуту).\n\n• RPM 80–90. Сопротивление низкое, уровень 3–5.\n• Пульс до 115–120.\n• Проверка: можешь говорить фразами, не задыхаясь.\n• Крутить легко и быстро правильнее, чем тяжело и медленно. На большом сопротивлении разминка превращается в силовую работу для коленей.\n• Если занят и берёшь степпер — уровень 3–5, темп прогулочный, за поручни только для равновесия.", "w": 1}, {"n": "Вращения плечами", "l": "1 × 20", "t": 60, "img": "Shoulder_Circles", "s": "ok", "w": 1, "c": "Круги руками вперёд и назад, амплитуда от малой к большой. Сегодня три движения на плечо — сустав надо прогреть."}, {"n": "Разведение с резиной", "l": "1 × 15", "t": 45, "img": "Band_Pull_Apart", "s": "ok", "w": 1, "c": "Резина перед собой на прямых руках, разводишь до касания груди, сводя лопатки. Включает заднюю дельту перед отжиманиями."}, {"n": "Отжимания на брусьях с противовесом", "l": "3 × 10", "c": "Тренажёр с наклейкой KNEELING EASY CHIN DIP. Опираешься коленями на подушку, берёшься за нижние параллельные рукоятки. Противовес такой, чтобы последние два повтора были тяжёлыми — чем больше выставлен вес, тем легче. Корпус чуть вперёд, вниз не проваливайся глубже комфортного.", "img": "Dips_-_Chest_Version", "s": "ok", "rest": 90}, {"n": "Бабочка (пек-дек)", "l": "3 × 12–15", "rest": 60, "s": "ok", "img": "Butterfly", "c": "Двойная машина с наклейками PECTORAL и REVERSE FLY, сторона PECTORAL. Второй заход на грудь за неделю: локти чуть согнуты и зафиксированы, вес небольшой, в сведении задержка на секунду."}, {"n": "Тяга верхнего блока широким хватом", "l": "3 × 10–12", "c": "Второй заход на спину за неделю. Тренажёр с наклейкой LAT MACHINE: бёдра под валики, тянешь к верху груди, в конце сводишь лопатки.", "img": "Wide-Grip_Lat_Pulldown", "s": "ok", "rest": 90}, {"n": "Face pull на блоке", "l": "3 × 15", "c": "Страховка плечевого сустава при трёх жимовых движениях в неделю. Канат на уровне лица, тянешь к переносице, локти выше кистей.", "img": "Face_Pull", "s": "ok", "rest": 60}, {"n": "Махи гантелями в стороны", "l": "4 × 15", "c": "Главный рычаг ширины плеч. Отдельного тренажёра для махов в зале нет, берёшь лёгкие гантели с хромированной стойки — там шаг в один килограмм. Ведёшь локтем, без раскачки корпусом.", "img": "Side_Lateral_Raise", "s": "ok", "rest": 60}, {"n": "Суперсет: бицепс + трицепс на блоке", "l": "3 × 12 + 12", "c": "Без отдыха между двумя упражнениями, отдых 90 секунд после пары. Экономит время, даёт хороший пампинг.", "img": "Cable_Hammer_Curls_-_Rope_Attachment", "s": "ok", "rest": 90}, {"n": "Скручивания на блоке с канатом", "l": "3 × 15", "rest": 60, "s": "ok", "img": "Cable_Crunch", "c": "Пресс третий раз за неделю. На коленях спиной к стойке, канат у висков, тянешь локтями к бёдрам за счёт живота, а не рук. Таз неподвижен."}, {"n": "Кардио: интервалы плюс заминка", "l": "1 × 20 мин", "c": "Сначала 9 минут интервалов на степпере или гребном — кнопка запуска на этой карточке. Потом 11 минут спокойного шага на дорожке. Гребля здесь — 24–28 SPM.", "img": "Rowing_Stationary", "s": "ok", "rest": 60, "iv": [60, 60, 5]}]}];
+
+const GLOSS = [{"k": "cross", "t": "Мультистанция (кроссовер)", "d": "Высокая стойка на четыре колонны с тросами и плитами. К тросам цепляются рукоятки, канат или прямой гриф. Высоту крепления троса можно менять — от пола до самого верха. На ней делается половина программы.", "img": "assets/gym/cross.jpg", "r": null, "p": ["мультистанци[A-Za-z\\u0400-\\u04FF0-9]*", "кроссовер[A-Za-z\\u0400-\\u04FF0-9]*"]}, {"k": "block", "t": "Блок (верхний и нижний)", "d": "«Блок» — это трос с грузом. Верхний блок — трос идёт сверху вниз, тянешь на себя вниз. Нижний блок — трос идёт снизу, тянешь к себе горизонтально. Груз выставляется штырьком в стопке плит.", "img": "assets/gym/cross.jpg", "r": null, "p": ["верхн[A-Za-z\\u0400-\\u04FF0-9]+ блок[A-Za-z\\u0400-\\u04FF0-9]*", "нижн[A-Za-z\\u0400-\\u04FF0-9]+ блок[A-Za-z\\u0400-\\u04FF0-9]*", "блок[A-Za-z\\u0400-\\u04FF0-9]*"]}, {"k": "lat", "t": "Lat machine (тяга верхнего блока)", "d": "Отдельный тренажёр с широкой изогнутой рукояткой сверху и валиками, которые фиксируют бёдра. В зале их два, оба с наклейкой LAT MACHINE. Садишься, заводишь бёдра под валики, тянешь рукоятку к груди.", "img": "assets/gym/lat.jpg", "r": null, "p": ["lat machine", "тяг[A-Za-z\\u0400-\\u04FF0-9]+ верхнего блока"]}, {"k": "row", "t": "Нижняя тяга сидя", "d": "Нижний трос мультистанции плюс скамья: садишься лицом к стойке, упираешься ногами и тянешь рукоять к животу. На фото человек как раз выполняет это движение.", "img": "assets/gym/row.jpg", "r": null, "p": ["нижн[A-Za-z\\u0400-\\u04FF0-9]+ тяг[A-Za-z\\u0400-\\u04FF0-9]*", "тяг[A-Za-z\\u0400-\\u04FF0-9]+ сидя на нижнем блоке"]}, {"k": "chestpress", "t": "Chest press", "d": "Жимовой тренажёр для груди: сидишь, спина прижата к спинке, толкаешь две рукоятки вперёд. Сиденье регулируется жёлтым рычагом сбоку — выставь так, чтобы рукоятки были на уровне середины груди.", "img": "assets/gym/chestpress.jpg", "r": null, "p": ["chest press[A-Za-z\\u0400-\\u04FF0-9]*"]}, {"k": "pecdeck", "t": "Бабочка (пек-дек)", "d": "Двойная машина Technogym: на панели две наклейки — PECTORAL и REVERSE FLY. Со стороны PECTORAL садишься лицом к спинке, предплечья на подушках, руки сводятся по дуге перед грудью. Тот же тренажёр используется во второй день для задней дельты, только садишься наоборот.", "img": "assets/gym/pecdeck.jpg", "r": null, "p": ["бабочк[A-Za-z\\u0400-\\u04FF0-9]+", "пек-дек[A-Za-z\\u0400-\\u04FF0-9]*"]}, {"k": "reversefly", "t": "Reverse fly (задняя дельта)", "d": "Обратная сторона той же машины. Садишься лицом к спинке, берёшься за рукоятки перед собой и разводишь руки назад, сводя лопатки. Работает задний пучок дельты и середина спины — то, что держит плечи развёрнутыми.", "img": "assets/gym/pecdeck.jpg", "r": null, "p": ["reverse fly", "обратн[A-Za-z\\u0400-\\u04FF0-9]+ разведени[A-Za-z\\u0400-\\u04FF0-9]+"]}, {"k": "dumbbells", "t": "Гантельный ряд", "d": "Резиновые Technogym от 4 до 40 кг. До 10 кг шаг по одному килограмму, дальше по два. Рабочие веса программы — жимы, тяга в наклоне, молотки — берутся отсюда.", "img": "assets/gym/dumbbells.jpg", "r": null, "p": ["гантел[A-Za-z\\u0400-\\u04FF0-9]+", "гантельн[A-Za-z\\u0400-\\u04FF0-9]+ ряд"]}, {"k": "light", "t": "Лёгкие гантели", "d": "Отдельная стойка с хромированными гантелями от 1 до 10 кг с шагом в килограмм. Нужна для двух вещей: разминочных подходов и махов в стороны, где прибавка сразу в 2 кг слишком грубая.", "img": "assets/gym/light.jpg", "r": null, "p": ["лёгк[A-Za-z\\u0400-\\u04FF0-9]+ гантел[A-Za-z\\u0400-\\u04FF0-9]+", "лёгкий вес"]}, {"k": "bench", "t": "Регулируемая скамья", "d": "Спинка поднимается рычагом снизу, ступенями. Для жима на наклонной нужно примерно 30 градусов — это первая-вторая ступень от горизонтали, спинка едва наклонена. Выше уже включаются плечи вместо груди.", "img": "assets/gym/bench.jpg", "r": null, "p": ["регулируем[A-Za-z\\u0400-\\u04FF0-9]+ скамь[A-Za-z\\u0400-\\u04FF0-9]+", "скамь[A-Za-z\\u0400-\\u04FF0-9]+", "скамейк[A-Za-z\\u0400-\\u04FF0-9]+"]}, {"k": "lateral", "t": "Махи гантелями в стороны", "d": "Отдельного тренажёра для махов в зале нет — делаются с гантелями. Берёшь лёгкие, корпус чуть наклонён вперёд, ведёшь локтем, поднимаешь до уровня плеч. Вес такой, чтобы не помогать себе рывком корпуса.", "img": null, "r": "Side_Lateral_Raise", "p": ["мах[A-Za-z\\u0400-\\u04FF0-9]+ гантелями в стороны", "мах[A-Za-z\\u0400-\\u04FF0-9]+ в стороны"]}, {"k": "shoulder", "t": "Жим над головой в тренажёре", "d": "Тренажёр Shoulder press PureStrength у окна, с жёлтыми подушками. Траектория задана конструкцией, плечу проще, чем со свободными гантелями. В программе не стоит, потому что требует навешивать блины — но это полноценная замена жиму гантелей сидя, если захочешь разнообразия.", "img": "assets/gym/shoulder.jpg", "r": null, "p": ["жим над головой в тренажёре", "shoulder press[A-Za-z\\u0400-\\u04FF0-9]*"]}, {"k": "legcurl", "t": "Leg curl (сгибание голени)", "d": "Technogym с наклейкой LEG CURL, сидячая версия. Садишься, голени поверх нижнего валика, верхний валик прижимает бёдра, чтобы таз не поднимался. Сгибаешь колени, тянешь пятки под себя. Работает задняя поверхность бедра — та, что почти не участвует в жиме ногами.", "img": "assets/gym/legcurl.jpg", "r": null, "p": ["leg curl", "сгибани[A-Za-z\\u0400-\\u04FF0-9]+ голени"]}, {"k": "legpress", "t": "Жим ногами", "d": "Technogym с наклейкой LEG PRESS. Сидишь в кресле, ставишь стопы на платформу и выпрямляешь ноги. Спина всё время прижата — поэтому для поясницы это безопаснее приседа со штангой.", "img": "assets/gym/legpress.jpg", "r": null, "p": ["жим[A-Za-z\\u0400-\\u04FF0-9]* ногами"]}, {"k": "scott", "t": "Скамья Скотта", "d": "Наклонная подставка под локти со стойкой для штанги. Локти лежат на подушке и не могут сдвинуться, поэтому помогать себе корпусом не выйдет. В программе заменена на тренажёр Arm Curl, потому что здесь нужно навешивать блины, а результат для бицепса тот же.", "img": "assets/gym/scott.jpg", "r": null, "p": ["скамь[A-Za-z\\u0400-\\u04FF0-9]+ скотта"]}, {"k": "armcurl", "t": "Arm Curl (бицепс в тренажёре)", "d": "Technogym с наклейкой ARM CURL. Садишься, подушки оказываются позади локтей и упираются в заднюю поверхность плеча, кисти берут нижние рукоятки. Сгибаешь руки к себе. Вес выставляется штырьком в стеке.", "img": "assets/gym/armcurl.jpg", "r": null, "p": ["arm curl", "бицепс в тренажёре"]}, {"k": "gravitron", "t": "Kneeling Easy Chin Dip (противовес)", "d": "Наклейка KNEELING EASY CHIN DIP. Одна машина на два движения: подтягивания за верхние рукоятки и отжимания на нижних параллельных. Опираешься коленями на подушку, она подпирает тебя вверх. Чем больше выставленный вес, тем сильнее помощь и тем легче упражнение.", "img": "assets/gym/gravitron.jpg", "r": null, "p": ["гравитрон[A-Za-z\\u0400-\\u04FF0-9]*", "противовес[A-Za-z\\u0400-\\u04FF0-9]*"]}, {"k": "station15", "t": "Стойка CHIN UP / DIP / LEG RAISE", "d": "Одна рама на три движения: подтягивания, брусья и подъём ног в упоре. Спина прижимается к вертикальной подушке, предплечья лежат на боковых упорах.", "img": "assets/gym/station15.jpg", "r": null, "p": ["chin up", "стойк[A-Za-z\\u0400-\\u04FF0-9]+ chin up", "упор[A-Za-z\\u0400-\\u04FF0-9]*"]}, {"k": "rope", "t": "Канат", "d": "Насадка на трос — верёвка с двумя утолщёнными концами. Крепится к блоку карабином. Даёт свободу кистям и позволяет разводить руки в конце движения, чего не даёт жёсткий гриф.", "img": null, "r": "Triceps_Pushdown_-_Rope_Attachment", "p": ["канат[A-Za-z\\u0400-\\u04FF0-9]*"]}, {"k": "ellipse", "t": "Эллипс, дорожка, велотренажёр", "d": "Застеклённая зона у окон: беговые дорожки и эллипсы Precor, гребной тренажёр Technogym, вертикальные и горизонтальные велотренажёры, сайкл и степпер-лестница. Эллипс не даёт ударной нагрузки на колени, гребной прогревает спину и плечи, степпер жёстче всего грузит ноги. Для разминки нужен лёгкий темп: дышишь носом, можешь спокойно говорить.", "img": "assets/gym/cardio.jpg", "r": null, "p": ["эллипс[A-Za-z\\u0400-\\u04FF0-9]*", "велотренажёр[A-Za-z\\u0400-\\u04FF0-9]*", "дорожк[A-Za-z\\u0400-\\u04FF0-9]+", "гребн[A-Za-z\\u0400-\\u04FF0-9]+ тренажёр[A-Za-z\\u0400-\\u04FF0-9]*", "степпер[A-Za-z\\u0400-\\u04FF0-9]*", "кардио"]}, {"k": "set", "t": "Подход и повтор", "d": "Повтор — одно движение от начала до конца. Подход — серия повторов подряд без паузы. Запись «4 × 8–12» значит: четыре подхода, в каждом от 8 до 12 повторов. Между подходами отдых 60–90 секунд.", "img": null, "r": "Incline_Dumbbell_Press", "p": ["подход[A-Za-z\\u0400-\\u04FF0-9]*", "повтор[A-Za-z\\u0400-\\u04FF0-9]*"]}, {"k": "warmupset", "t": "Разминочный подход", "d": "Один подход того же упражнения с очень лёгким весом, примерно половина рабочего, на 10–12 повторов. Не утомляет, но прогревает сустав и напоминает мышце траекторию движения.", "img": null, "r": "Leverage_Chest_Press", "p": ["разминочн[A-Za-z\\u0400-\\u04FF0-9]+ подход[A-Za-z\\u0400-\\u04FF0-9]*"]}, {"k": "rir", "t": "Повторы в запасе", "d": "Мера того, насколько тяжело закончился подход. «Два в запасе» — остановился, когда мог бы сделать ещё два. Это рабочий режим программы: даёт результат и оставляет силы, в отличие от работы до полного отказа.", "img": null, "r": "Leg_Press", "p": ["повтор[A-Za-z\\u0400-\\u04FF0-9]* в запасе", "до отказа"]}, {"k": "superset", "t": "Суперсет", "d": "Два упражнения подряд без отдыха между ними, отдых только после пары. Обычно на мышцы-противоположности — бицепс и трицепс. Экономит время и хорошо наполняет руки кровью.", "img": null, "r": "Cable_Hammer_Curls_-_Rope_Attachment", "p": ["суперсет[A-Za-z\\u0400-\\u04FF0-9]*"]}, {"k": "negative", "t": "Негатив", "d": "Фаза, в которой вес опускается. Мышца при этом растягивается под нагрузкой — и именно здесь она получает основной стимул к росту. Поэтому вниз всегда медленно, на 2–3 счёта, а не бросая вес.", "img": null, "r": "Hammer_Curls", "p": ["негатив[A-Za-z\\u0400-\\u04FF0-9]*"]}, {"k": "pump", "t": "Пампинг", "d": "Ощущение забитости и распирания в мышце от прилившей крови после большого количества повторов. Держится час-полтора. Само по себе не показатель результата, но приятный побочный эффект.", "img": null, "r": "Cable_Crossover", "p": ["пампинг[A-Za-z\\u0400-\\u04FF0-9]*"]}, {"k": "amplitude", "t": "Амплитуда", "d": "Путь, который проходит вес от начала движения до конца. Полная амплитуда — от полного растяжения до полного сокращения. Укорачивать её ради большего веса не стоит: мышца получит меньше работы.", "img": null, "r": "Butterfly", "p": ["амплитуд[A-Za-z\\u0400-\\u04FF0-9]+"]}, {"k": "delta", "t": "Дельта (средняя и задняя)", "d": "Дельтовидная мышца плеча состоит из трёх пучков. Средний идёт по боковой поверхности — он и создаёт ширину плеч, его качают махи в стороны. Задний находится сзади, делает плечо круглым и держит осанку.", "img": null, "r": "Side_Lateral_Raise", "p": ["средн[A-Za-z\\u0400-\\u04FF0-9]+ дельт[A-Za-z\\u0400-\\u04FF0-9]*", "задн[A-Za-z\\u0400-\\u04FF0-9]+ дельт[A-Za-z\\u0400-\\u04FF0-9]*", "дельт[A-Za-z\\u0400-\\u04FF0-9]+"]}, {"k": "scapula", "t": "Сведение лопаток", "d": "Движение, при котором лопатки сдвигаются друг к другу, будто зажимаешь между ними карандаш. Без него тяга выполняется одними руками, и спина почти не работает.", "img": null, "r": "Seated_Cable_Rows", "p": ["лопатк[A-Za-z\\u0400-\\u04FF0-9]+"]}, {"k": "rollers", "t": "Валики", "d": "Мягкие цилиндры на тренажёре, которые фиксируют бёдра или голени и не дают телу подниматься за весом. Высота регулируется — упор должен быть плотным, но без боли.", "img": null, "r": "Wide-Grip_Lat_Pulldown", "p": ["валик[A-Za-z\\u0400-\\u04FF0-9]+"]}, {"k": "intervals", "t": "Интервальное кардио", "d": "Чередование быстрых и спокойных отрезков, обычно по минуте. За те же 10 минут даёт больше, чем ровный темп, и переносится легче, чем непрерывный быстрый бег.", "img": "assets/gym/cardio.jpg", "r": null, "p": ["интервал[A-Za-z\\u0400-\\u04FF0-9]*"]}];
+
+/* --- подсветка терминов --- */
+const LETTER = "A-Za-z\u0400-\u04FF";
+const MATCHERS = GLOSS.flatMap(g => g.p.map(p => ({k:g.k, src:p})))
+  .sort((a,b) => b.src.length - a.src.length);
+const RE = new RegExp(
+  "(?<![" + LETTER + "])(" + MATCHERS.map(m => m.src).join("|") + ")(?![" + LETTER + "])", "gi");
+
+function esc(t){
+  return t.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+}
+function whichTerm(word){
+  for(const m of MATCHERS){
+    if(new RegExp("^(?:" + m.src + ")$", "i").test(word)) return m.k;
+  }
+  return null;
+}
+/* размечает строку, подсвечивая каждый термин только один раз */
+function mark(text, seen){
+  return esc(text).replace(RE, (full) => {
+    const k = whichTerm(full);
+    if(!k || seen.has(k)) return full;
+    seen.add(k);
+    return '<button type="button" class="term" data-k="' + k + '">' + full + '</button>';
+  });
+}
+/* размечает уже готовую разметку, не трогая теги */
+function markStatic(root){
+  const seen = new Set();
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  const nodes = [];
+  while(walker.nextNode()) nodes.push(walker.currentNode);
+  nodes.forEach(n => {
+    if(n.parentElement.closest('.term, h1, h2, .gloss')) return;
+    const html = mark(n.nodeValue, seen);
+    if(html === esc(n.nodeValue)) return;
+    const span = document.createElement('span');
+    span.innerHTML = html;
+    n.parentNode.replaceChild(span, n);
+  });
+}
+
+/* --- карточка термина --- */
+const sheet = document.getElementById('sheet');
+let lastFocus = null;
+function openSheet(title, text, src, html){
+  lastFocus = document.activeElement;
+  const ta = document.getElementById('sheetInput');
+  const ld = document.getElementById('sheetLoad');
+  if(ta) ta.hidden = true;
+  if(ld) ld.hidden = true;
+  const img = document.getElementById('sheetImg');
+  if(src){
+    img.src = src.url; img.alt = title;
+    img.classList.toggle('photo', !!src.photo);
+    img.hidden = false;
+  } else {
+    img.removeAttribute('src'); img.hidden = true;
+  }
+  document.getElementById('sheetTitle').textContent = title;
+  const body = document.getElementById('sheetText');
+  if(html) body.innerHTML = text; else body.textContent = text;
+  sheet.hidden = false;
+  document.body.style.overflow = 'hidden';
+  sheet.querySelector('.sheet-close').focus();
+}
+function closeTerm(){
+  sheet.hidden = true;
+  document.body.style.overflow = '';
+  if(lastFocus) lastFocus.focus();
+}
+function openTerm(k){
+  const g = GLOSS.find(x => x.k === k);
+  if(!g) return;
+  const url = g.img || (g.r && IMG[g.r] ? IMG[g.r][0] : null);
+  openSheet(g.t, g.d, url ? {url: url, photo: !!g.img} : null);
+}
+
+sheet.addEventListener('click', e => { if(e.target.hasAttribute('data-close')) closeTerm(); });
+document.addEventListener('keydown', e => { if(e.key === 'Escape' && !sheet.hidden) closeTerm(); });
+document.addEventListener('click', e => {
+  const b = e.target.closest('.term, .gloss-item');
+  if(b) openTerm(b.dataset.k);
+});
+
+/* --- глоссарий списком --- */
+(function(){
+  const list = document.getElementById('glossList');
+  const groups = [['Тренажёры и оборудование', GLOSS.filter(g => g.img)],
+                  ['Термины', GLOSS.filter(g => !g.img)]];
+  groups.forEach(([name, items]) => {
+    const h = document.createElement('h3'); h.textContent = name; list.appendChild(h);
+    items.forEach(g => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'gloss-item'; b.dataset.k = g.k;
+      b.innerHTML = '<span>' + esc(g.t) + '</span><span class="chev" aria-hidden="true">→</span>';
+      list.appendChild(b);
+    });
+  });
+})();
+
+/* --- журнал весов --- */
+const NL = String.fromCharCode(10);
+
+/* Просмотрщик отдаёт только «Script error» — ловим детали сами и показываем на экране */
+function showError(msg){
+  try{
+    const b = document.getElementById('banner');
+    if(!b) return;
+    b.className = 'banner err';
+    b.textContent = 'Сбой: ' + msg;
+    b.hidden = false;
+  }catch(err){}
+}
+window.addEventListener('error', ev => {
+  const where = ev.lineno ? ' · строка ' + ev.lineno + ':' + (ev.colno || 0) : '';
+  let stack = '';
+  if(ev.error && ev.error.stack) stack = ' · ' + String(ev.error.stack).split(NL)[1];
+  showError((ev.message || 'без описания') + where + stack);
+});
+window.addEventListener('unhandledrejection', ev => {
+  const r = ev.reason;
+  showError('промис: ' + (r && r.message ? r.message : String(r)));
+});
+/* обёртка: сбой в одном обработчике не должен ронять остальной интерфейс */
+function safe(name, fn){
+  return function(){
+    try{ return fn.apply(this, arguments); }
+    catch(err){ showError(name + ' — ' + (err && err.message ? err.message : String(err))); }
+  };
+}
+const LOG_KEY = 'weightlog:v1';
+let LOG = {};
+let canPersist = false;
+
+function today(){
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function ruDate(iso){
+  const [y,m,d] = iso.split('-');
+  return d + '.' + m;
+}
+/* Хранилище просмотрщика бывает недоступно или отвечает нестандартно.
+   Пробуем оба варианта вызова, при отказе отключаем автосохранение навсегда,
+   чтобы не сыпать ошибками, и предлагаем ручной бэкап. */
+async function storageSet(value){
+  try{ return await window.storage.set(LOG_KEY, value, false); }
+  catch(e){ return await window.storage.set(LOG_KEY, value); }
+}
+async function storageGet(){
+  try{ return await window.storage.get(LOG_KEY, false); }
+  catch(e){ return await window.storage.get(LOG_KEY); }
+}
+/* Три уровня хранения, сверху вниз:
+   1) хранилище просмотрщика Claude;
+   2) память браузера — работает, если файл открыт напрямую в Safari или Chrome;
+   3) только текущая сессия плюс ручной бэкап. */
+let mode = 'none';
+const LS_KEY = 'weightlog_v1';
+function localAvailable(){
+  try{
+    const ls = window.localStorage;
+    if(!ls) return false;
+    const probe = '__probe' + Date.now();
+    ls.setItem(probe, '1');
+    ls.removeItem(probe);
+    return true;
+  }catch(err){ return false; }
+}
+async function loadLog(){
+  if(window.storage && typeof window.storage.set === 'function'){
+    let data = {};
+    try{
+      const res = await storageGet();
+      if(res && res.value) data = JSON.parse(res.value);
+    }catch(err){ /* ключа ещё нет — не ошибка */ }
+    try{
+      await storageSet(JSON.stringify(data));
+      mode = 'cloud'; canPersist = true;
+      return data;
+    }catch(err){ /* пробуем следующий уровень */ }
+  }
+  if(localAvailable()){
+    mode = 'local'; canPersist = true;
+    try{
+      const raw = window.localStorage.getItem(LS_KEY);
+      return raw ? JSON.parse(raw) : {};
+    }catch(err){ return {}; }
+  }
+  mode = 'none'; canPersist = false;
+  return {};
+}
+let saveTimer = null;
+let warned = false;
+async function flushLog(){
+  clearTimeout(saveTimer); saveTimer = null;
+  if(!canPersist) return;
+  try{
+    const payload = JSON.stringify(LOG);
+    if(mode === 'local'){ window.localStorage.setItem(LS_KEY, payload); }
+    else { await storageSet(payload); }
+  }catch(err){}
+}
+function saveLog(){
+  if(!canPersist) return;
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(async () => {
+    try{
+      const payload = JSON.stringify(LOG);
+      if(mode === 'local'){ window.localStorage.setItem(LS_KEY, payload); }
+      else { await storageSet(payload); }
+    }catch(err){
+      canPersist = false; mode = 'none';
+      if(!warned){ warned = true; showBanner(); }
+    }
+  }, 400);
+}
+function showBanner(){
+  const b = document.getElementById('banner');
+  if(!b) return;
+  b.textContent = 'Здесь веса держатся только до перезагрузки — это предпросмотр. Открой страницу по её адресу в интернете, и записи начнут сохраняться сами. А пока перед выходом жми «Скопировать журнал» внизу.';
+  b.hidden = false;
+}
+function showSaved(){
+  const b = document.getElementById('banner');
+  if(!b) return;
+  b.className = 'banner ok';
+  b.textContent = 'Веса сохраняются автоматически в памяти браузера — можно закрывать файл, записи останутся.';
+  b.hidden = false;
+}
+const PROG_KEY = '__prog';
+function prog(){
+  let p = LOG[PROG_KEY];
+  if(!p || typeof p !== 'object' || Array.isArray(p)){
+    p = LOG[PROG_KEY] = {day: 0, date: '', sets: {}, done: false};
+  }
+  p.day = safeDay(p.day);
+  if(!p.sets || typeof p.sets !== 'object' || Array.isArray(p.sets)) p.sets = {};
+  if(typeof p.date !== 'string') p.date = '';
+  return p;
+}
+function safeDay(di){
+  const n = parseInt(di, 10);
+  return (isNaN(n) || n < 0 || n >= DAYS.length) ? 0 : n;
+}
+function totalSets(di){
+  return DAYS[safeDay(di)].ex
+    .filter(e => !e.w && !e.t && !e.iv)
+    .reduce((a, e) => a + (parseInt(e.l, 10) || 3), 0);
+}
+function markedSets(p){
+  let n = 0;
+  Object.keys(p.sets || {}).forEach(k => {
+    const arr = p.sets[k];
+    if(Array.isArray(arr)) arr.forEach(v => { if(v) n++; });
+  });
+  return n;
+}
+/* Куда открыться при запуске:
+   тот же календарный день — продолжаем с отметками;
+   новый день и прошлая тренировка сделана — следующий день;
+   новый день, а прошлая не доделана — тот же день заново. */
+function initDay(){
+  const p = prog();
+  if(p.date === today()){
+    current = p.day;
+    state = p.sets && typeof p.sets === 'object' ? p.sets : {};
+    p.sets = state;
+    return;
+  }
+  if(p.date){
+    const share = markedSets(p) / Math.max(1, totalSets(p.day));
+    const finished = p.done || share >= 0.7;
+    current = finished ? (p.day + 1) % DAYS.length : p.day;
+  } else {
+    current = 0;
+  }
+  state = {};
+  p.day = current; p.sets = state; p.done = false; p.date = '';
+}
+function touchProgress(){
+  const p = prog();
+  if(p.day !== current){
+    Object.keys(state).forEach(k => {
+      if(k.indexOf(current + ':') !== 0) delete state[k];
+    });
+    p.day = current;
+  }
+  p.date = today();
+  p.sets = state;
+  saveLog();
+  paintProgress();
+}
+function paintProgress(){
+  const p = prog();
+  const bar = document.getElementById('progline');
+  const btn = document.getElementById('finishDay');
+  if(!bar) return;
+  const num = p.day + 1;
+  if(p.date === today()){
+    const done = markedSets(p), total = totalSets(p.day);
+    bar.textContent = done === 0
+      ? 'Сегодня день ' + num + ' · отметок пока нет'
+      : 'Идёт день ' + num + ' · отмечено ' + done + ' из ' + total + ' подходов';
+    btn.hidden = false;
+  } else {
+    bar.textContent = 'Следующая тренировка — день ' + num;
+    btn.hidden = true;
+  }
+}
+const CFG_KEY = '__cfg';
+function cfg(){
+  if(!LOG[CFG_KEY] || typeof LOG[CFG_KEY] !== 'object' || Array.isArray(LOG[CFG_KEY])){
+    LOG[CFG_KEY] = {ext: false, name: 'Отдых'};
+  }
+  return LOG[CFG_KEY];
+}
+/* передаём отсчёт системному таймеру через быстрые команды */
+function fireExternal(sec){
+  const c = cfg();
+  if(!c.ext || !c.name || !sec) return;
+  flushLog();   // уходим из вкладки — журнал должен быть записан заранее
+  try{
+    const url = 'shortcuts://run-shortcut?name=' + encodeURIComponent(c.name)
+              + '&input=text&text=' + encodeURIComponent(String(sec));
+    window.location.href = url;
+  }catch(err){}
+}
+function entries(key){
+  const v = LOG[key];
+  if(!Array.isArray(v)) return [];
+  // отбраковываем битые записи: null, объекты без даты, нечисловой вес
+  return v.filter(x => x && typeof x === 'object'
+                    && typeof x.d === 'string' && x.d.length
+                    && typeof x.w === 'number' && isFinite(x.w) && x.w > 0);
+}
+function todayWeight(key){
+  const e = entries(key).find(x => x.d === today());
+  return e ? e.w : '';
+}
+function lastWeight(key){
+  const prev = entries(key).filter(x => x.d !== today());
+  return prev.length ? prev[prev.length-1] : null;
+}
+function setWeight(key, value){
+  const w = parseFloat(String(value).replace(',', '.'));
+  const list = entries(key).filter(x => x.d !== today());
+  if(!isNaN(w) && w > 0) list.push({d: today(), w: w});
+  LOG[key] = list.slice(-12);
+  saveLog();
+}
+
+/* --- таймер: отдых, удержания, разминка, интервалы --- */
+/* --- режим упражнения на весь экран --- */
+const exview = document.getElementById('exview');
+let exIdx = -1;
+
+function exSets(i){
+  const key = current + ':' + i;
+  const total = parseInt(DAYS[current].ex[i].l, 10) || 3;
+  if(!state[key]) state[key] = new Array(total).fill(false);
+  return state[key];
+}
+
+function renderEx(i){
+  const d = DAYS[current];
+  if(i < 0 || i >= d.ex.length) return;
+  exIdx = i;
+  const e = d.ex[i];
+
+  document.getElementById('excount').textContent =
+    String(i + 1).padStart(2, '0') + ' / ' + String(d.ex.length).padStart(2, '0');
+  document.getElementById('exday').textContent = d.title;
+  document.getElementById('exname').textContent = e.n;
+  document.getElementById('exload').textContent = e.l;
+  const cueEl = document.getElementById('excue');
+  cueEl.onclick = () => openSheet(e.n, mark(e.c, new Set()), null, true);
+
+  const frame = document.getElementById('exframe');
+  const ia = document.getElementById('eximgA'), ib = document.getElementById('eximgB');
+  if(e.img && IMG[e.img]){
+    ia.src = IMG[e.img][0]; ib.src = IMG[e.img][1];
+    ia.alt = e.n + ' — начальная фаза'; ib.alt = e.n + ' — конечная фаза';
+    frame.hidden = false;
+  } else { frame.hidden = true; }
+
+  const key = current + ':' + i;
+  const w = document.getElementById('exweight');
+  const row = document.querySelector('.exrow');
+  const old = document.getElementById('extimer');
+  if(old) old.remove();
+  if(e.t || e.iv){
+    w.hidden = true;
+    w.oninput = null;
+    document.querySelector('.exrow .unit').hidden = true;
+    const tb = document.createElement('button');
+    tb.type = 'button'; tb.id = 'extimer'; tb.className = 'extimer';
+    tb.textContent = e.iv
+      ? 'Интервалы · ' + e.iv[2] + ' × (' + Math.round(e.iv[0]/60) + ' / ' + Math.round(e.iv[1]/60) + ' мин)'
+      : 'Старт · ' + (e.t >= 60 ? Math.round(e.t/60) + ' мин' : e.t + ' сек');
+    tb.addEventListener('click', () => {
+      if(e.iv) startIntervals(e.iv[0], e.iv[1], e.iv[2]);
+      else startTimer(e.t, e.n.toLowerCase());
+    });
+    row.appendChild(tb);
+  } else {
+    w.hidden = false;
+    document.querySelector('.exrow .unit').hidden = false;
+    w.value = todayWeight(key);
+    w.oninput = () => { setWeight(key, w.value); };
+  }
+
+  const box = document.getElementById('exsets');
+  box.innerHTML = '';
+  const noSets = !!(e.w || e.t || e.iv);
+  box.hidden = noSets;
+  if(noSets){
+    document.getElementById('exprev').disabled = (i === 0);
+    const nx = document.getElementById('exnext');
+    nx.textContent = (i === d.ex.length - 1) ? 'Завершить тренировку' : 'Следующее упражнение';
+    return;
+  }
+  const arr = exSets(i);
+  arr.forEach((v, si) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'exset';
+    b.setAttribute('aria-pressed', v ? 'true' : 'false');
+    b.setAttribute('aria-label', 'Подход ' + (si + 1));
+    b.textContent = String(si + 1);
+    b.addEventListener('click', () => {
+      arr[si] = !arr[si];
+      b.setAttribute('aria-pressed', arr[si] ? 'true' : 'false');
+      touchProgress();
+      if(!arr[si] && tTick){ stopTimer(); }   // снял отметку — отсчёт больше не нужен
+      if(arr[si] && arr.every(Boolean)){
+        // упражнение закрыто — возвращаемся к списку и подсвечиваем следующее
+        setTimeout(() => {
+          closeEx();
+          setTimeout(() => highlightCard(i + 1), 320);
+        }, 550);
+      } else if(arr[si] && !e.w){
+        const done = arr.filter(Boolean).length;
+        startTimer(e.rest || 90, 'отдых', e.n + ' · дальше подход ' + (done + 1) + ' из ' + arr.length);
+      }
+    });
+    box.appendChild(b);
+  });
+
+  document.getElementById('exprev').disabled = (i === 0);
+  const next = document.getElementById('exnext');
+  next.textContent = (i === d.ex.length - 1) ? 'Завершить тренировку' : 'Следующее упражнение';
+}
+const highlightCard = safe('подсветка карточки', function(n){
+  const cards = document.querySelectorAll('#app .card');
+  const el = cards[n];
+  if(!el){
+    const pl = document.querySelector('.progline');
+    if(pl) pl.scrollIntoView({block: 'center', behavior: 'smooth'});
+    return;
+  }
+  el.scrollIntoView({block: 'center', behavior: 'smooth'});
+  el.classList.add('focusme');
+  setTimeout(() => el.classList.remove('focusme'), 1800);
+});
+const openEx = safe('открытие упражнения', function(i){
+  renderEx(i);
+  exview.hidden = false;
+  document.body.style.overflow = 'hidden';
+  requestAnimationFrame(() => exview.classList.add('up'));
+  exview.scrollTop = 0;
+});
+function closeEx(){
+  exview.classList.remove('up');
+  document.body.style.overflow = '';
+  setTimeout(safe('перерисовка списка', () => {
+    exview.hidden = true;
+    render();
+  }), 280);
+}
+document.getElementById('exclose').addEventListener('click', safe('закрытие упражнения', closeEx));
+document.getElementById('exprev').addEventListener('click', () => {
+  if(exIdx > 0){ renderEx(exIdx - 1); exview.scrollTop = 0; }
+});
+document.getElementById('exnext').addEventListener('click', () => {
+  if(exIdx < DAYS[current].ex.length - 1){ renderEx(exIdx + 1); exview.scrollTop = 0; }
+  else {
+    closeEx();
+    setTimeout(finishDay, 320);
+  }
+});
+
+/* Фоновый сигнал: JS в фоне замирает, а воспроизведение звука продолжается.
+   Поэтому генерируем дорожку «тишина нужной длины + сигнал в конце»
+   и запускаем её как обычный аудиофайл.
+   Запускать её обязательно в касании и не останавливать при уходе из вкладки:
+   начать воспроизведение, когда страница уже скрыта, WebKit не даёт. */
+const bgAudio = new Audio();
+bgAudio.preload = 'auto';
+let bgUrl = null;
+
+function writeStr(view, off, str){ for(let i=0;i<str.length;i++) view.setUint8(off+i, str.charCodeAt(i)); }
+
+function buildTrack(segments){
+  const rate = 8000;                       // хватает для сигнала, экономит память
+  const total = segments.reduce((a,s) => a + s.sec, 0);
+  const n = Math.max(1, Math.ceil(total * rate));
+  const buf = new ArrayBuffer(44 + n);
+  const view = new DataView(buf);
+  writeStr(view, 0, 'RIFF'); view.setUint32(4, 36 + n, true);
+  writeStr(view, 8, 'WAVEfmt '); view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true); view.setUint16(22, 1, true);
+  view.setUint32(24, rate, true); view.setUint32(28, rate, true);
+  view.setUint16(32, 1, true); view.setUint16(34, 8, true);
+  writeStr(view, 36, 'data'); view.setUint32(40, n, true);
+  const pcm = new Uint8Array(buf, 44);
+  pcm.fill(128);                            // тишина для 8 бит без знака
+
+  function tone(atSec, durSec, freq, amp){
+    const from = Math.floor(atSec * rate), to = Math.min(n, Math.floor((atSec + durSec) * rate));
+    for(let i = from; i < to; i++){
+      const t = (i - from) / rate;
+      const fade = Math.min(1, (to - i) / (rate * 0.03));
+      pcm[i] = 128 + Math.round(Math.sin(2 * Math.PI * freq * t) * amp * fade);
+    }
+  }
+  let at = 0;
+  segments.forEach((s, idx) => {
+    at += s.sec;
+    const last = idx === segments.length - 1;
+    if(s.sec > 3.5){                        // отсчёт последних секунд
+      for(let k = 3; k >= 1; k--) tone(at - k, 0.12, 620, 40);
+    }
+    if(last){ tone(at - 0.9, 0.28, 990, 100); tone(at - 0.5, 0.28, 990, 100); tone(at - 0.1, 0.3, 990, 100); }
+    else tone(at - 0.25, 0.22, s.next === 'fast' ? 990 : 700, 90);
+  });
+  return new Blob([buf], {type: 'audio/wav'});
+}
+
+function stopTrack(){
+  try{ bgAudio.pause(); bgAudio.removeAttribute('src'); bgAudio.load(); }catch(err){}
+  if(bgUrl){ URL.revokeObjectURL(bgUrl); bgUrl = null; }
+}
+function scheduleTrack(){
+  stopTrack();
+  if(!tPhases) return;
+  const left = Math.max(0.2, (tEnd - Date.now()) / 1000);
+  const segs = [{sec: left, next: tPhases[tIdx + 1] ? (tPhases[tIdx + 1].beep === 2 ? 'fast' : 'easy') : null}];
+  for(let i = tIdx + 1; i < tPhases.length; i++){
+    segs.push({sec: tPhases[i].sec, next: tPhases[i + 1] ? (tPhases[i + 1].beep === 2 ? 'fast' : 'easy') : null});
+  }
+  try{
+    // playback, а не transient: transient — короткий сигнал, в фоне он не продолжается
+    if(navigator.audioSession) navigator.audioSession.type = 'playback';
+  }catch(err){}
+  try{
+    bgUrl = URL.createObjectURL(buildTrack(segs));
+    bgAudio.src = bgUrl;
+    bgAudio.currentTime = 0;
+    const p = bgAudio.play();
+    if(p && p.catch) p.catch(() => {});
+  }catch(err){}
+}
+
+const tbar   = document.getElementById('tbar');
+const tdisp  = document.getElementById('tdisp');
+const tlabel = document.getElementById('tlabel');
+const tplus  = document.getElementById('tplus');
+const tstop  = document.getElementById('tstop');
+
+const tfull  = document.getElementById('tfull');
+const tphase = document.getElementById('tphase');
+const tbig   = document.getElementById('tbig');
+const tnext  = document.getElementById('tnext');
+const trfg   = document.getElementById('trfg');
+const RING = 2 * Math.PI * 108;
+trfg.style.strokeDasharray = RING;
+trfg.style.strokeDashoffset = 0;
+
+let tEnd = 0, tTick = null, tPhases = null, tIdx = 0, actx = null, wake = null;
+let tTotal = 0, tHint = '';
+
+function fmt(ms){
+  const s = Math.max(0, Math.ceil(ms / 1000));
+  return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+}
+function beep(count, freq){
+  // дорожка играет с самого старта таймера и сигналы уже несёт в себе — не дублируем
+  const onTrack = bgUrl && !bgAudio.paused && !bgAudio.ended;
+  if(!onTrack) try{
+    if(!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+    if(actx.state === 'suspended') actx.resume();
+    for(let i = 0; i < count; i++){
+      const osc = actx.createOscillator(), gain = actx.createGain();
+      const at = actx.currentTime + i * 0.3;
+      osc.type = 'sine';
+      osc.frequency.value = freq || 880;
+      gain.gain.setValueAtTime(0.0001, at);
+      gain.gain.exponentialRampToValueAtTime(0.5, at + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, at + 0.24);
+      osc.connect(gain); gain.connect(actx.destination);
+      osc.start(at); osc.stop(at + 0.26);
+    }
+  }catch(err){}
+  try{ if(navigator.vibrate) navigator.vibrate(count > 1 ? [180, 90, 180] : 180); }catch(err){}
+}
+async function keepAwake(on){
+  try{
+    if(on && navigator.wakeLock && !wake){ wake = await navigator.wakeLock.request('screen'); }
+    else if(!on && wake){ wake.release(); wake = null; }
+  }catch(err){ wake = null; }
+}
+function showFull(on){
+  tfull.hidden = !on;
+  document.body.style.overflow = on ? 'hidden' : '';
+}
+function paintRing(left){
+  const frac = tTotal > 0 ? Math.max(0, Math.min(1, left / tTotal)) : 0;
+  trfg.style.strokeDashoffset = RING * (1 - frac);
+  tfull.classList.toggle('warn', left <= 10000 && left > 0);
+}
+function tRunning(on){
+  tbar.classList.toggle('run', on);
+  tbar.setAttribute('role', on ? 'button' : 'group');
+  if(on) tbar.setAttribute('aria-label', 'Развернуть таймер на весь экран');
+  else tbar.removeAttribute('aria-label');
+  tbar.hidden = !on;
+  keepAwake(on);
+}
+function stopTimer(){
+  stopTrack();
+  clearInterval(tTick); tTick = null; tPhases = null;
+  tdisp.textContent = '--:--';
+  tlabel.textContent = 'таймер';
+  tnext.textContent = '';
+  tbar.classList.remove('done');
+  tfull.classList.remove('warn');
+  showFull(false);
+  tRunning(false);
+}
+function runPhase(){
+  const p = tPhases[tIdx];
+  tTotal = p.sec * 1000;
+  tEnd = Date.now() + tTotal;
+  tlabel.textContent = p.label;
+  tphase.textContent = p.label;
+  beep(p.beep || 1, p.freq);
+}
+function tickFn(){
+  const left = tEnd - Date.now();
+  const text = fmt(left);
+  tdisp.textContent = text;
+  tbig.textContent = text;
+  paintRing(left);
+  if(left > 0){
+    const s = Math.ceil(left / 1000);
+    if(s <= 3 && s !== tickFn.last){ tickFn.last = s; beep(1, 600); }
+    return;
+  }
+  // после сворачивания вкладки могло пройти несколько фаз — догоняем разом
+  let guard = 0;
+  while(tPhases && tIdx < tPhases.length - 1 && guard < 100){
+    tIdx++;
+    const p = tPhases[tIdx];
+    tTotal = p.sec * 1000;
+    tEnd = tEnd + tTotal;
+    guard++;
+    if(tEnd - Date.now() > 0){
+      tlabel.textContent = p.label;
+      tphase.textContent = p.label;
+      beep(p.beep || 1, p.freq);
+      return;
+    }
+  }
+  if(tPhases && tIdx < tPhases.length - 1){ tIdx = tPhases.length - 1; }
+  clearInterval(tTick); tTick = null;
+  tdisp.textContent = '00:00';
+  tbig.textContent = '00:00';
+  tlabel.textContent = 'готово';
+  tphase.textContent = 'готово';
+  tnext.textContent = tHint || 'можно продолжать';
+  paintRing(0);
+  beep(3, 990);
+  tbar.classList.add('done');
+  tRunning(false);
+  setTimeout(() => { if(!tTick) stopTimer(); }, 6000);
+}
+function startPhases(phases, hint){
+  clearInterval(tTick);
+  tPhases = phases; tIdx = 0; tickFn.last = null;
+  tHint = hint || '';
+  tnext.textContent = tHint;
+  tbar.classList.remove('done');
+  tfull.classList.remove('warn');
+  tRunning(true);
+  runPhase();
+  const left = tEnd - Date.now();
+  tdisp.textContent = fmt(left);
+  tbig.textContent = fmt(left);
+  paintRing(left);
+  showFull(true);
+  scheduleTrack();
+  tTick = setInterval(tickFn, 200);
+}
+function startTimer(sec, label, hint){
+  startPhases([{sec: sec, label: label, beep: 1}], hint);
+  fireExternal(sec);
+}
+function startIntervals(work, easy, rounds){
+  const list = [];
+  for(let i = 1; i <= rounds; i++){
+    list.push({sec: work, label: 'быстро · круг ' + i + ' из ' + rounds, beep: 2, freq: 990});
+    if(i < rounds) list.push({sec: easy, label: 'спокойно · круг ' + i, beep: 1, freq: 620});
+  }
+  startPhases(list);
+}
+tplus.addEventListener('click', () => {
+  tEnd += 30000; tTotal += 30000;
+  tdisp.textContent = fmt(tEnd - Date.now());
+  scheduleTrack();
+});
+tstop.addEventListener('click', stopTimer);
+document.getElementById('fstop').addEventListener('click', stopTimer);
+document.getElementById('fplus').addEventListener('click', () => {
+  tEnd += 30000; tTotal += 30000;
+  const left = tEnd - Date.now();
+  tdisp.textContent = fmt(left); tbig.textContent = fmt(left); paintRing(left);
+  scheduleTrack();
+});
+document.getElementById('fmin').addEventListener('click', () => showFull(false));
+
+tbar.addEventListener('click', ev => {
+  if(ev.target.closest('button')) return;   // кнопки панели работают как раньше
+  if(tTick) showFull(true);
+});
+document.addEventListener('keydown', ev => {
+  if(ev.key === 'Escape' && !tfull.hidden){ showFull(false); }
+});
+
+const app = document.getElementById('app');
+let state = {};
+let current = 0;
+
+function sectionTitle(text){
+  const h = document.createElement('p');
+  h.className = 'sectitle';
+  h.textContent = text;
+  return h;
+}
+const render = safe('отрисовка', function(){
+  const d = DAYS[safeDay(current)];
+  app.innerHTML = '';
+
+  const seen = new Set();
+  const head = document.createElement('div');
+  head.className = 'dayhead';
+  head.innerHTML = '<h2>' + esc(d.title) + '</h2><p>' + mark(d.focus, seen) + '</p>';
+  app.appendChild(head);
+
+
+  let headed = {warm: false, main: false};
+  d.ex.forEach((e,i) => {
+    const isWarm = !!e.w;
+    if(isWarm && !headed.warm){ headed.warm = true; app.appendChild(sectionTitle('Разминка')); }
+    if(!isWarm && !headed.main){ headed.main = true; app.appendChild(sectionTitle('Тренировка')); }
+    const sets = parseInt(e.l,10) || 3;
+    const key = current + ':' + i;
+    if(!state[key]) state[key] = new Array(sets).fill(false);
+
+    const card = document.createElement('article');
+    card.className = 'card';
+
+    if(e.img && IMG[e.img]){
+      const fr = document.createElement('div');
+      fr.className = 'frame';
+      const a = document.createElement('img');
+      a.className = 'a'; a.src = IMG[e.img][0]; a.alt = e.n + ' — начальная фаза'; a.loading = 'lazy';
+      const b = document.createElement('img');
+      b.className = 'b'; b.src = IMG[e.img][1]; b.alt = e.n + ' — конечная фаза'; b.loading = 'lazy';
+      fr.append(a,b);
+      card.appendChild(fr);
+    }
+
+    const top = document.createElement('div');
+    top.className = 'card-top';
+    top.innerHTML = '<span class="idx">' + String(i+1).padStart(2,'0') + '</span>'
+      + '<h3 class="name">' + mark(e.n, seen) + '</h3>'
+      + '<span class="load">' + esc(e.l) + '</span>';
+    card.appendChild(top);
+
+    const cue = document.createElement('p');
+    cue.className = 'cue';
+    cue.innerHTML = mark(e.c, seen);
+    card.appendChild(cue);
+
+    if(e.t || e.iv){
+      const tb = document.createElement('button');
+      tb.type = 'button'; tb.className = 'wu-start';
+      tb.textContent = e.iv
+        ? 'Интервалы · ' + e.iv[2] + ' × (' + Math.round(e.iv[0]/60) + ' / ' + Math.round(e.iv[1]/60) + ' мин)'
+        : 'Старт · ' + (e.t >= 60 ? Math.round(e.t/60) + ' мин' : e.t + ' сек');
+      tb.addEventListener('click', ev => {
+        ev.stopPropagation();
+        if(e.iv) startIntervals(e.iv[0], e.iv[1], e.iv[2]);
+        else startTimer(e.t, e.n.toLowerCase());
+      });
+      card.appendChild(tb);
+    }
+
+    const logRow = document.createElement('div');
+    logRow.className = 'log';
+
+    const wLab = document.createElement('label');
+    wLab.textContent = 'Вес, кг';
+    wLab.htmlFor = 'w' + key.replace(':','_');
+    logRow.appendChild(wLab);
+
+    const inp = document.createElement('input');
+    inp.type = 'text';
+    inp.inputMode = 'decimal';
+    inp.id = 'w' + key.replace(':','_');
+    inp.placeholder = '—';
+    inp.value = todayWeight(key);
+    inp.classList.toggle('filled', !!inp.value);
+    inp.addEventListener('input', () => {
+      setWeight(key, inp.value);
+      inp.classList.toggle('filled', !!inp.value.trim());
+      refreshLast();
+    });
+    logRow.appendChild(inp);
+
+    const last = document.createElement('button');
+    last.type = 'button';
+    function refreshLast(){
+      const prev = lastWeight(key);
+      const cur = parseFloat(String(inp.value).replace(',','.'));
+      if(!prev){
+        last.className = 'last empty';
+        last.textContent = entries(key).length ? 'история' : 'первый раз';
+        last.disabled = !entries(key).length;
+        return;
+      }
+      last.className = 'last';
+      last.disabled = false;
+      let txt = 'прошлый раз ' + prev.w + ' кг';
+      if(!isNaN(cur) && cur !== prev.w){
+        const diff = Math.round((cur - prev.w) * 10) / 10;
+        txt += '  ' + (diff > 0 ? '+' : '') + diff;
+      }
+      last.textContent = txt;
+    }
+    refreshLast();
+    last.addEventListener('click', () => {
+      const list = entries(key);
+      const text = list.length
+        ? list.slice().reverse().map(x => ruDate(x.d) + ' — ' + x.w + ' кг').join(NL)
+        : 'Записей пока нет.';
+      openSheet(e.n, text, IMG[e.img] ? {url: IMG[e.img][0], photo: false} : null);
+    });
+    logRow.appendChild(last);
+    if(!e.w && !e.t && !e.iv) card.appendChild(logRow);
+
+    const st = document.createElement('span');
+    st.className = 'stat ' + (e.s === 'ok' ? 'ok' : 'check');
+    st.textContent = e.s === 'ok' ? '✓ тренажёр подтверждён' : '? проверить в зале';
+    card.appendChild(st);
+
+    const bottom = document.createElement('div');
+    bottom.className = 'card-bottom';
+    let needBottom = false;
+
+    if(e.hold){
+      const hb = document.createElement('button');
+      hb.type = 'button'; hb.className = 'hold';
+      hb.textContent = 'Отсчёт ' + e.hold + ' сек';
+      hb.addEventListener('click', ev => { ev.stopPropagation(); startTimer(e.hold, e.n.toLowerCase()); });
+      bottom.appendChild(hb);
+      needBottom = true;
+    }
+
+    if(needBottom) card.appendChild(bottom);
+    card.addEventListener('click', ev => {
+      // поле веса, история и термины работают как раньше
+      if(ev.target.closest('button, input, a, textarea')) return;
+      openEx(i);
+    });
+    // отдельная кнопка для клавиатуры и озвучки — карточку кнопкой не объявляем,
+    // иначе получается интерактивный элемент внутри интерактивного
+    const a11y = document.createElement('button');
+    a11y.type = 'button';
+    a11y.className = 'a11y-open';
+    a11y.textContent = 'Открыть упражнение ' + e.n;
+    a11y.addEventListener('click', () => openEx(i));
+    card.appendChild(a11y);
+    if(!e.w && !e.t && !e.iv && state[key].every(Boolean)) card.classList.add('done');
+    app.appendChild(card);
+  });
+});
+
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    current = +t.dataset.day;
+    document.querySelectorAll('.tab').forEach(x =>
+      x.setAttribute('aria-selected', x === t ? 'true' : 'false'));
+    paintProgress();
+    paintTabs();
+    render();
+    window.scrollTo({top:0});
+  });
+});
+
+document.getElementById('reset').addEventListener('click', () => {
+  Object.keys(state).forEach(k => delete state[k]);
+  const p = prog();
+  p.done = false; p.sets = state;
+  saveLog(); paintProgress(); render();
+});
+
+function logAsText(){
+  const out = [];
+  DAYS.forEach((d, di) => d.ex.forEach((e, i) => {
+    const list = entries(di + ':' + i);
+    if(list.length) out.push(di + ':' + i + '|' + e.n + '|' +
+      list.map(x => x.d + '=' + x.w).join(','));
+  }));
+  return out.join(NL);
+}
+function textAsLog(text){
+  const res = {};
+  const CR = String.fromCharCode(13);
+  String(text).split(NL).forEach(rawLine => {
+    const line = rawLine.split(CR).join('');
+    const parts = line.split('|');
+    if(parts.length < 3) return;
+    const key = parts[0].trim();
+    const kp = key.split(':');
+    const di = parseInt(kp[0], 10), ei = parseInt(kp[1], 10);
+    if(kp.length !== 2 || isNaN(di) || isNaN(ei)) return;
+    if(di < 0 || di >= DAYS.length || ei < 0 || ei >= DAYS[di].ex.length) return;
+    const list = [];
+    parts[2].split(',').forEach(pair => {
+      const kv = pair.split('=');
+      const date = (kv[0] || '').trim();
+      const w = parseFloat(kv[1]);
+      const dp = date.split('-');
+      const dateOk = dp.length === 3 && dp[0].length === 4 && !isNaN(parseInt(dp[0], 10));
+      if(dateOk && !isNaN(w) && w > 0 && w <= 1000) list.push({d: date, w: w});
+    });
+    if(list.length) res[key] = list.slice(-12);
+  });
+  return res;
+}
+
+document.getElementById('backup').addEventListener('click', async () => {
+  const text = logAsText();
+  if(!text){ openSheet('Журнал пуст', 'Сначала запиши хотя бы один вес.', null); return; }
+  let copied = false;
+  try{ await navigator.clipboard.writeText(text); copied = true; }catch(err){ copied = false; }
+  openSheet(copied ? 'Журнал скопирован' : 'Скопируй вручную',
+    copied ? 'Текст журнала в буфере обмена — вставь его в заметки. Чтобы вернуть данные позже, нажми «Вставить журнал».'
+           : 'Выдели текст ниже и скопируй его в заметки:' + NL + NL + text, null);
+});
+
+document.getElementById('restore').addEventListener('click', () => {
+  openSheet('Вставить журнал', 'Вставь сюда текст, который копировал раньше, и нажми «Загрузить». Текущие записи будут заменены.', null);
+  const ta = document.getElementById('sheetInput');
+  const btn = document.getElementById('sheetLoad');
+  ta.value = ''; ta.hidden = false; btn.hidden = false;
+  btn.onclick = () => {
+    const parsed = textAsLog(ta.value);
+    const n = Object.keys(parsed).length;
+    if(!n){ ta.hidden = true; btn.hidden = true; openSheet('Не разобрал текст', 'Формат не распознан. Нужен текст, полученный кнопкой «Скопировать журнал».', null); return; }
+    // сливаем: прогресс дня и настройки не должны потеряться
+    Object.keys(parsed).forEach(k => { LOG[k] = parsed[k]; });
+    saveLog();
+    ta.hidden = true; btn.hidden = true;
+    closeTerm();
+    render();
+  };
+});
+
+(function(){
+  const tg = document.getElementById('extToggle');
+  const lb = document.getElementById('extLabel');
+  const nm = document.getElementById('extName');
+  function paint(){
+    const c = cfg();
+    tg.setAttribute('aria-pressed', c.ext ? 'true' : 'false');
+    lb.textContent = 'Отдавать отсчёт таймеру телефона — ' + (c.ext ? 'включено' : 'выключено');
+    nm.value = c.name || 'Отдых';
+  }
+  tg.addEventListener('click', () => { const c = cfg(); c.ext = !c.ext; saveLog(); paint(); });
+  nm.addEventListener('input', () => { const c = cfg(); c.name = nm.value.trim() || 'Отдых'; saveLog(); });
+  document.getElementById('extHelp').addEventListener('click', () => {
+    openSheet('Быстрая команда для таймера',
+      ['Один раз настроить на телефоне:',
+       '',
+       '1. Открой приложение «Быстрые команды»',
+       '2. Плюс вверху справа → «Добавить действие»',
+       '3. Найди действие «Запустить таймер»',
+       '4. В поле длительности нажми на число и выбери переменную «Вход быстрой команды», единицы — секунды',
+       '5. Назови команду «Отдых» и сохрани',
+       '',
+       'Затем вернись сюда, включи переключатель выше. Если назвал команду иначе — впиши это название в поле.',
+       '',
+       'Как это работает: при старте отдыха телефон переключится в «Команды» и заведёт системный таймер на нужные секунды. Он прозвонит даже с заблокированным экраном. Обратно в программу — свайпом или через переключение приложений.',
+       '',
+       'На Android быстрых команд нет, там способ другой — скажи, если понадобится.'].join(NL),
+      null);
+  });
+  window.paintCfg = paint;
+})();
+
+function finishDay(){
+  const p = prog();
+  const doneNum = current + 1;
+  const next = (current + 1) % DAYS.length;
+  // сразу переводим указатель на следующий день, а не при следующем запуске
+  p.day = next; p.sets = {}; p.done = false; p.date = today();
+  state = p.sets;
+  current = next;
+  saveLog();
+  paintTabs(); paintProgress(); render();
+  window.scrollTo({top: 0});
+  openSheet('День ' + doneNum + ' завершён',
+    'Программа переключена на день ' + (next + 1) + '. Веса сохранены, отметки подходов обнулены.', null);
+}
+document.getElementById('finishDay').addEventListener('click', finishDay);
+
+document.getElementById('netcheck').addEventListener('click', async () => {
+  const btn = document.getElementById('netcheck');
+  const wasText = btn.textContent;
+  btn.textContent = 'Проверяю…';
+  btn.disabled = true;
+
+  const notes = [];
+
+  // 1. загрузились ли внешние шрифты
+  let fontOk = false;
+  try{
+    if(document.fonts && typeof document.fonts.check === 'function'){
+      fontOk = document.fonts.check('700 16px \"JetBrains Mono\"', 'МОДИИН')
+            || document.fonts.check('700 16px \"Archivo Narrow\"', 'ABC');
+    }
+  }catch(err){ fontOk = false; }
+  notes.push('Внешние шрифты: ' + (fontOk ? 'загрузились' : 'не загрузились'));
+
+  // 2. живой сетевой запрос наружу
+  async function probe(url){
+    try{
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 7000);
+      await fetch(url, {mode: 'no-cors', cache: 'no-store', signal: ctrl.signal});
+      clearTimeout(timer);
+      return true;
+    }catch(err){ return false; }
+  }
+  const gotFonts  = await probe('https://fonts.googleapis.com/css2?family=Archivo&display=swap');
+  const gotScript = await probe('https://script.google.com/');
+  notes.push('Запрос на fonts.googleapis.com: ' + (gotFonts ? 'прошёл' : 'заблокирован'));
+  notes.push('Запрос на script.google.com: ' + (gotScript ? 'прошёл' : 'заблокирован'));
+
+  // 3. хранилище
+  let storeOk = false;
+  try{
+    if(window.storage && typeof window.storage.set === 'function'){
+      await storageSet(JSON.stringify(LOG));
+      storeOk = true;
+    }
+  }catch(err){ storeOk = false; }
+  const where = mode === 'cloud' ? 'хранилище просмотрщика'
+              : mode === 'local' ? 'память браузера — записи сохраняются'
+              : 'нигде, только текущая сессия';
+  notes.push('Постоянное хранилище: ' + (storeOk ? 'работает' : 'недоступно'));
+  notes.push('Журнал сейчас пишется в: ' + where);
+
+  const verdict = gotScript
+    ? 'Связь есть. Вариант с Apps Script сработает — присылай адрес скрипта, вошью его в файл.'
+    : (gotFonts
+        ? 'Наружу файл ходит, но именно на серверы Google Script запрос не прошёл. Пришли адрес скрипта — проверю на нём напрямую, возможно дело в конкретном домене.'
+        : 'Просмотрщик не выпускает запросы наружу. Автоотправка в таблицу отсюда работать не будет.');
+
+  btn.textContent = wasText;
+  btn.disabled = false;
+  openSheet('Проверка связи', notes.join(NL) + NL + NL + verdict, null);
+});
+
+document.getElementById('export').addEventListener('click', () => {
+  const lines = [];
+  DAYS.forEach((d, di) => {
+    d.ex.forEach((e, i) => {
+      const list = entries(di + ':' + i);
+      if(list.length){
+        lines.push(e.n + ': ' + list.slice().reverse().map(x => ruDate(x.d) + ' — ' + x.w).join(', '));
+      }
+    });
+  });
+  openSheet('Журнал весов',
+    lines.length ? lines.join(NL + NL) : 'Пока ничего не записано. Введи вес в поле на карточке упражнения.',
+    null);
+});
+
+function paintTabs(){
+  const p = prog();
+  document.querySelectorAll('.tab').forEach(t => {
+    const di = +t.dataset.day;
+    t.setAttribute('aria-selected', di === current ? 'true' : 'false');
+    t.classList.toggle('now', di === p.day);
+  });
+}
+
+const boot = safe('запуск', async function(){
+  LOG = await loadLog();
+  if(window.paintCfg) window.paintCfg();
+  initDay();
+  paintTabs();
+  paintProgress();
+  render();
+  markStatic(document.querySelector('header'));
+  markStatic(document.querySelector('.notes'));
+  if(!canPersist) showBanner();
+  else if(mode === 'local') showSaved();
+});
+boot();
+</script>
+</body>
+</html>
