@@ -484,6 +484,15 @@ footer p{margin:0 0 6px;font-size:13px}
       <button class="reset" id="netcheck" type="button">Проверить связь с интернетом</button>
 
       <div class="cfg">
+        <h4>Сигнал в фоне</h4>
+        <p>Чтобы сигнал прозвучал после ухода в другое приложение, отсчёт проигрывается дорожкой с самого начала отдыха. Плата за это — музыка в наушниках встаёт на паузу на всё время отдыха: на айфоне звук в фоне и микширование с музыкой одновременно невозможны. Включай в те дни, когда тренируешься без музыки.</p>
+        <button class="toggle" id="bgToggle" type="button" aria-pressed="false">
+          <span class="dotmark" aria-hidden="true"></span>
+          <span id="bgLabel">Сигнал после ухода из приложения — выключено</span>
+        </button>
+      </div>
+
+      <div class="cfg">
         <h4>Таймер телефона</h4>
         <p>Встроенный отсчёт звучит только пока страница открыта. Системный таймер сработает и при заблокированном экране — но для этого нужна быстрая команда, см. «Как настроить».</p>
         <button class="toggle" id="extToggle" type="button" aria-pressed="false">
@@ -883,7 +892,7 @@ function paintProgress(){
 const CFG_KEY = '__cfg';
 function cfg(){
   if(!LOG[CFG_KEY] || typeof LOG[CFG_KEY] !== 'object' || Array.isArray(LOG[CFG_KEY])){
-    LOG[CFG_KEY] = {ext: false, name: 'Отдых'};
+    LOG[CFG_KEY] = {ext: false, name: 'Отдых', bg: false};
   }
   return LOG[CFG_KEY];
 }
@@ -1115,6 +1124,8 @@ function stopTrack(){
 function scheduleTrack(){
   stopTrack();
   if(!tPhases) return;
+  // выключено по умолчанию: играющая дорожка занимает аудиосессию и ставит музыку на паузу
+  if(!cfg().bg) return;
   const left = Math.max(0.2, (tEnd - Date.now()) / 1000);
   const segs = [{sec: left, next: tPhases[tIdx + 1] ? (tPhases[tIdx + 1].beep === 2 ? 'fast' : 'easy') : null}];
   for(let i = tIdx + 1; i < tPhases.length; i++){
@@ -1561,6 +1572,15 @@ document.getElementById('restore').addEventListener('click', () => {
     nm.value = c.name || 'Отдых';
   }
   tg.addEventListener('click', () => { const c = cfg(); c.ext = !c.ext; saveLog(); paint(); });
+  const bt = document.getElementById('bgToggle');
+  const bl = document.getElementById('bgLabel');
+  function paintBg(){
+    const c = cfg();
+    bt.setAttribute('aria-pressed', c.bg ? 'true' : 'false');
+    bl.textContent = 'Сигнал после ухода из приложения — ' + (c.bg ? 'включено' : 'выключено');
+  }
+  bt.addEventListener('click', () => { const c = cfg(); c.bg = !c.bg; saveLog(); paintBg(); });
+  paintBg();
   nm.addEventListener('input', () => { const c = cfg(); c.name = nm.value.trim() || 'Отдых'; saveLog(); });
   document.getElementById('extHelp').addEventListener('click', () => {
     openSheet('Быстрая команда для таймера',
@@ -1579,7 +1599,7 @@ document.getElementById('restore').addEventListener('click', () => {
        'На Android быстрых команд нет, там способ другой — скажи, если понадобится.'].join(NL),
       null);
   });
-  window.paintCfg = paint;
+  window.paintCfg = () => { paint(); paintBg(); };
 })();
 
 function finishDay(){
