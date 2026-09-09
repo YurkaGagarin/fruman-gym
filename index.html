@@ -490,6 +490,27 @@ footer p{margin:0 0 6px;font-size:13px}
           <span class="dotmark" aria-hidden="true"></span>
           <span id="bgLabel">Сигнал после ухода из приложения — выключено</span>
         </button>
+
+        <!-- ВРЕМЕННО: перебор типов аудиосессии на устройстве. Убрать, когда выберем победителя. -->
+        <div id="sessPick">
+          <p>Проверка: чем дорожка объявляет себя системе. Включи музыку и прогони отдых на каждом варианте.</p>
+          <button class="toggle" type="button" data-sess="playback" aria-pressed="false">
+            <span class="dotmark" aria-hidden="true"></span>
+            <span>playback — ставит чужую музыку на паузу на весь отдых</span>
+          </button>
+          <button class="toggle" type="button" data-sess="transient" aria-pressed="false">
+            <span class="dotmark" aria-hidden="true"></span>
+            <span>transient — приглушает музыку, сигнал звучит поверх</span>
+          </button>
+          <button class="toggle" type="button" data-sess="ambient" aria-pressed="false">
+            <span class="dotmark" aria-hidden="true"></span>
+            <span>ambient — не трогает музыку, смешивается с ней</span>
+          </button>
+          <button class="toggle" type="button" data-sess="transient-solo" aria-pressed="false">
+            <span class="dotmark" aria-hidden="true"></span>
+            <span>transient-solo — пауза музыке, после сигнала сама продолжит</span>
+          </button>
+        </div>
       </div>
 
       <div class="cfg">
@@ -892,7 +913,7 @@ function paintProgress(){
 const CFG_KEY = '__cfg';
 function cfg(){
   if(!LOG[CFG_KEY] || typeof LOG[CFG_KEY] !== 'object' || Array.isArray(LOG[CFG_KEY])){
-    LOG[CFG_KEY] = {ext: false, name: 'Отдых', bg: false};
+    LOG[CFG_KEY] = {ext: false, name: 'Отдых', bg: false, sess: 'playback'};
   }
   return LOG[CFG_KEY];
 }
@@ -1132,8 +1153,10 @@ function scheduleTrack(){
     segs.push({sec: tPhases[i].sec, next: tPhases[i + 1] ? (tPhases[i + 1].beep === 2 ? 'fast' : 'easy') : null});
   }
   try{
-    // playback, а не transient: transient — короткий сигнал, в фоне он не продолжается
-    if(navigator.audioSession) navigator.audioSession.type = 'playback';
+    // тип сессии временно выбирается в настройках: выясняем, какой из них и в фоне
+    // играет, и уживается с чужой музыкой — прежний вывод про transient сделан
+    // на старой версии iOS и требует перепроверки
+    if(navigator.audioSession) navigator.audioSession.type = cfg().sess || 'playback';
   }catch(err){}
   try{
     bgUrl = URL.createObjectURL(buildTrack(segs));
@@ -1581,6 +1604,16 @@ document.getElementById('restore').addEventListener('click', () => {
   }
   bt.addEventListener('click', () => { const c = cfg(); c.bg = !c.bg; saveLog(); paintBg(); });
   paintBg();
+  // ВРЕМЕННО: выбор типа аудиосессии, вместе с блоком #sessPick
+  const sessBtns = Array.from(document.querySelectorAll('#sessPick [data-sess]'));
+  function paintSess(){
+    const cur = cfg().sess || 'playback';
+    sessBtns.forEach(b => b.setAttribute('aria-pressed', b.dataset.sess === cur ? 'true' : 'false'));
+  }
+  sessBtns.forEach(b => b.addEventListener('click', () => {
+    const c = cfg(); c.sess = b.dataset.sess; saveLog(); paintSess();
+  }));
+  paintSess();
   nm.addEventListener('input', () => { const c = cfg(); c.name = nm.value.trim() || 'Отдых'; saveLog(); });
   document.getElementById('extHelp').addEventListener('click', () => {
     openSheet('Быстрая команда для таймера',
