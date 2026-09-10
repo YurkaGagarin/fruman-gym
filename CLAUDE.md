@@ -82,7 +82,7 @@ The console has access to the script's top-level names: `cfg()`, `actx`, `wake`,
 
 ## Testing on the device
 
-An instruction for the phone is written out step by step, with nothing left implied: what has to be playing, whether the timer needs to be started by hand, exactly where to tap, what to listen for and where to look afterwards. A bare command is not enough. Facts come first and explanations second — a silent signal was once explained by a guess about the session type while the state, once actually read, turned out to be identical to the successful run; the real cause was a stalled `AudioContext`.
+An instruction for the phone is written out step by step, with nothing left implied: what has to be playing, whether the timer needs starting by hand, exactly where to tap, what to listen for and where to look afterwards.
 
 ## Publishing
 
