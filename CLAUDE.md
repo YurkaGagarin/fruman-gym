@@ -68,6 +68,8 @@ The app lives on an iPhone as a home screen icon, and the shell is WebKit. Hence
 - **The second path to a signal in the background** is `fireExternal()`: hand the countdown to the system timer through the Shortcuts app (`cfg().ext`, also off by default). The system timer rings with the screen locked and only ducks the music.
 - **Notifications.** Web Push for home screen apps on iOS exists from version 16.4 — the earlier note saying «notifications are unavailable» was wrong. But the project has no `manifest.json`, no service worker and no scheduling server, so the path is closed for technical reasons, not by the platform.
 - **The home screen cache.** An app launched from the icon holds on to the page it loaded earlier. Before testing a new build on the device it has to be closed from the app switcher and opened again — otherwise the old code is what gets tested.
+- **The set mark in a card is a square,** not a circle — worth knowing when writing step-by-step instructions for the phone.
+- **The file preview inside the Claude chat has neither network nor persistent storage.** Weights are only saved on the published site.
 - **Browser storage** is unavailable to pages served from the `file:` scheme — saving weights can only be checked over `https://`.
 
 ## Debugging on the device
@@ -83,6 +85,8 @@ The console has access to the script's top-level names: `cfg()`, `actx`, `wake`,
 ## Testing on the device
 
 An instruction for the phone is written out step by step, with nothing left implied: what has to be playing, whether the timer needs starting by hand, exactly where to tap, what to listen for and where to look afterwards.
+
+Phone settings that affect the measurements: auto-lock is normally set to «Никогда» (it has to be set to 30 seconds to prove that the screen is being held), Low Power Mode is off, and the default browser is Chrome. The last one does not affect debugging — an app launched from the icon runs in the system WebKit, and that is exactly what Web Inspector attaches to.
 
 ## Publishing
 
