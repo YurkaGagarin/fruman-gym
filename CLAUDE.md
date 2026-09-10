@@ -45,9 +45,15 @@ An exercise counts as a strength exercise (the one that gets set marks and a wei
 
 Mind the name collision: `w` on an exercise means warm-up, while `w` in a weight-journal entry is the weight itself.
 
+**The cue `c` is one dry line**, parts separated by ` · `: how the machine is set, the metric to watch, the pace. Nothing else. Keep at least one glossary word in it — `basic` warns when the first card of the day has no clickable term left. Explanation, theory and drills belong in the glossary, which is one tap away from the highlighted word — a cue written as an encyclopedia entry has already been rewritten once. The cue must not repeat what the card already shows: the sets line and the timer button both display the duration.
+
 ### Term format in `data/terms.py`
 
 A tuple `(key, title, explanation, image key or None, [patterns])`. The patterns are regular expressions that highlight the term inside the card text; `\w` in them is replaced by a character class that includes Cyrillic.
+
+A pattern must belong to one term only: the same pattern on two terms makes `whichTerm()` resolve by list order, so the highlighted word opens whichever term comes first.
+
+A bare `http(s)://` address inside the explanation becomes a link when the term card is opened; the visible label is the domain. That is the only markup allowed in an explanation — everything else is escaped.
 
 ## Rules learned the hard way
 
@@ -91,6 +97,8 @@ Phone settings that affect the measurements: auto-lock is normally set to «Ни
 ## Publishing
 
 GitHub Pages, repository `YurkaGagarin/fruman-gym`, branch `main`, folder `/ (root)`. What gets published is `index.html` together with the `assets` folder — the images are separate files.
+
+Pages does not rebuild instantly: right after a push the site still serves the previous build for a few dozen seconds. Check for a string from the new build, and check any new file under `assets/` separately — a fresh `index.html` with a missing image gives a broken card on the phone.
 
 ## Communication
 
