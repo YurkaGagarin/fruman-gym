@@ -491,26 +491,6 @@ footer p{margin:0 0 6px;font-size:13px}
           <span id="bgLabel">Сигнал после ухода из приложения — выключено</span>
         </button>
 
-        <!-- ВРЕМЕННО: перебор типов аудиосессии на устройстве. Убрать, когда выберем победителя. -->
-        <div id="sessPick">
-          <p>Проверка: чем дорожка объявляет себя системе. Включи музыку и прогони отдых на каждом варианте.</p>
-          <button class="toggle" type="button" data-sess="playback" aria-pressed="false">
-            <span class="dotmark" aria-hidden="true"></span>
-            <span>playback — ставит чужую музыку на паузу на весь отдых</span>
-          </button>
-          <button class="toggle" type="button" data-sess="transient" aria-pressed="false">
-            <span class="dotmark" aria-hidden="true"></span>
-            <span>transient — приглушает музыку, сигнал звучит поверх</span>
-          </button>
-          <button class="toggle" type="button" data-sess="ambient" aria-pressed="false">
-            <span class="dotmark" aria-hidden="true"></span>
-            <span>ambient — не трогает музыку, смешивается с ней</span>
-          </button>
-          <button class="toggle" type="button" data-sess="transient-solo" aria-pressed="false">
-            <span class="dotmark" aria-hidden="true"></span>
-            <span>transient-solo — пауза музыке, после сигнала сама продолжит</span>
-          </button>
-        </div>
       </div>
 
       <div class="cfg">
@@ -913,7 +893,7 @@ function paintProgress(){
 const CFG_KEY = '__cfg';
 function cfg(){
   if(!LOG[CFG_KEY] || typeof LOG[CFG_KEY] !== 'object' || Array.isArray(LOG[CFG_KEY])){
-    LOG[CFG_KEY] = {ext: false, name: 'Отдых', bg: false, sess: 'playback'};
+    LOG[CFG_KEY] = {ext: false, name: 'Отдых', bg: false};
   }
   return LOG[CFG_KEY];
 }
@@ -1152,12 +1132,9 @@ function scheduleTrack(){
   for(let i = tIdx + 1; i < tPhases.length; i++){
     segs.push({sec: tPhases[i].sec, next: tPhases[i + 1] ? (tPhases[i + 1].beep === 2 ? 'fast' : 'easy') : null});
   }
-  try{
-    // тип сессии временно выбирается в настройках: выясняем, какой из них и в фоне
-    // играет, и уживается с чужой музыкой — прежний вывод про transient сделан
-    // на старой версии iOS и требует перепроверки
-    if(navigator.audioSession) navigator.audioSession.type = cfg().sess || 'playback';
-  }catch(err){}
+  // дорожке нужен playback: только он звучит после ухода в другое приложение.
+  // Цена измерена — чужая музыка встаёт на паузу на весь отдых, потому дорожка и выключена по умолчанию.
+  setSession('playback');
   try{
     bgUrl = URL.createObjectURL(buildTrack(segs));
     bgAudio.src = bgUrl;
@@ -1183,6 +1160,31 @@ trfg.style.strokeDasharray = RING;
 trfg.style.strokeDashoffset = 0;
 
 let tEnd = 0, tTick = null, tPhases = null, tIdx = 0, actx = null, wake = null;
+let actxAt = 0, actxWall = 0;            // чем распознаём зависший контекст
+
+const SESS_IDLE = 'auto';
+function setSession(type){
+  try{ if(navigator.audioSession) navigator.audioSession.type = type; }catch(err){}
+}
+function newCtx(){
+  try{ if(actx) actx.close(); }catch(err){}
+  actx = new (window.AudioContext || window.webkitAudioContext)();
+  actxAt = 0; actxWall = 0;
+  return actx;
+}
+/* Контекст умирает при уходе в другое приложение и обратно: состояние остаётся
+   running, а currentTime стоит на месте — измерено на iOS 26.3 через веб-инспектор,
+   см. docs/research/audio-session-matrix.md. resume() такой контекст не оживляет,
+   помогает только пересоздание, и надёжно — лишь внутри касания. Поэтому отсчёт
+   всегда стартует со свежим контекстом, а beep() чинит что успеет. */
+function audioReady(fresh){
+  const wall = Date.now();
+  const stalled = actxWall && wall - actxWall > 400 && actx && actx.currentTime === actxAt;
+  if(!actx || fresh || stalled || actx.state === 'interrupted') newCtx();
+  try{ if(actx.state !== 'running') actx.resume(); }catch(err){}
+  actxAt = actx.currentTime; actxWall = Date.now();
+  return actx;
+}
 let tTotal = 0, tHint = '';
 
 function fmt(ms){
@@ -1193,17 +1195,16 @@ function beep(count, freq){
   // дорожка играет с самого старта таймера и сигналы уже несёт в себе — не дублируем
   const onTrack = bgUrl && !bgAudio.paused && !bgAudio.ended;
   if(!onTrack) try{
-    if(!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
-    if(actx.state === 'suspended') actx.resume();
+    const ctx = audioReady(false);
     for(let i = 0; i < count; i++){
-      const osc = actx.createOscillator(), gain = actx.createGain();
-      const at = actx.currentTime + i * 0.3;
+      const osc = ctx.createOscillator(), gain = ctx.createGain();
+      const at = ctx.currentTime + i * 0.3;
       osc.type = 'sine';
       osc.frequency.value = freq || 880;
       gain.gain.setValueAtTime(0.0001, at);
       gain.gain.exponentialRampToValueAtTime(0.5, at + 0.02);
       gain.gain.exponentialRampToValueAtTime(0.0001, at + 0.24);
-      osc.connect(gain); gain.connect(actx.destination);
+      osc.connect(gain); gain.connect(ctx.destination);
       osc.start(at); osc.stop(at + 0.26);
     }
   }catch(err){}
@@ -1211,7 +1212,9 @@ function beep(count, freq){
 }
 async function keepAwake(on){
   try{
-    if(on && navigator.wakeLock && !wake){ wake = await navigator.wakeLock.request('screen'); }
+    // при уходе страницы в фон систему снимает блокировку сама, а переменная остаётся
+    // заполненной: без проверки released повторный запрос уже никогда не уйдёт
+    if(on && navigator.wakeLock && (!wake || wake.released)){ wake = await navigator.wakeLock.request('screen'); }
     else if(!on && wake){ wake.release(); wake = null; }
   }catch(err){ wake = null; }
 }
@@ -1234,6 +1237,7 @@ function tRunning(on){
 }
 function stopTimer(){
   stopTrack();
+  setSession(SESS_IDLE);
   clearInterval(tTick); tTick = null; tPhases = null;
   tdisp.textContent = '--:--';
   tlabel.textContent = 'таймер';
@@ -1297,6 +1301,9 @@ function startPhases(phases, hint){
   tnext.textContent = tHint;
   tbar.classList.remove('done');
   tfull.classList.remove('warn');
+  // transient звучит поверх чужой музыки и не ставит её на паузу — измерено на iOS 26.3
+  setSession('transient');
+  audioReady(true);
   tRunning(true);
   runPhase();
   const left = tEnd - Date.now();
@@ -1604,16 +1611,6 @@ document.getElementById('restore').addEventListener('click', () => {
   }
   bt.addEventListener('click', () => { const c = cfg(); c.bg = !c.bg; saveLog(); paintBg(); });
   paintBg();
-  // ВРЕМЕННО: выбор типа аудиосессии, вместе с блоком #sessPick
-  const sessBtns = Array.from(document.querySelectorAll('#sessPick [data-sess]'));
-  function paintSess(){
-    const cur = cfg().sess || 'playback';
-    sessBtns.forEach(b => b.setAttribute('aria-pressed', b.dataset.sess === cur ? 'true' : 'false'));
-  }
-  sessBtns.forEach(b => b.addEventListener('click', () => {
-    const c = cfg(); c.sess = b.dataset.sess; saveLog(); paintSess();
-  }));
-  paintSess();
   nm.addEventListener('input', () => { const c = cfg(); c.name = nm.value.trim() || 'Отдых'; saveLog(); });
   document.getElementById('extHelp').addEventListener('click', () => {
     openSheet('Быстрая команда для таймера',
