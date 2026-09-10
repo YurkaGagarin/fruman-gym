@@ -396,6 +396,7 @@ footer p{margin:0 0 6px;font-size:13px}
 .gloss h3{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
   letter-spacing:.13em;text-transform:uppercase;color:var(--accent);margin:18px 0 10px}
 .gloss h3:first-of-type{margin-top:0}
+#sheetText a{color:var(--accent);text-decoration:underline;word-break:break-word}
 .gloss-item{
   display:flex;align-items:center;gap:12px;width:100%;min-height:52px;
   appearance:none;cursor:pointer;text-align:left;
@@ -590,6 +591,12 @@ const RE = new RegExp(
 function esc(t){
   return t.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 }
+/* превращает голый адрес в ссылку, подписью остаётся домен */
+function linkify(t){
+  return esc(t).replace(/https?:\/\/\S+/g, u =>
+    '<a href="' + u + '" target="_blank" rel="noopener">' +
+    u.replace(/^https?:\/\/(www\.)?([^\/?#]+).*$/, '$2') + '</a>');
+}
 function whichTerm(word){
   for(const m of MATCHERS){
     if(new RegExp("^(?:" + m.src + ")$", "i").test(word)) return m.k;
@@ -654,7 +661,7 @@ function openTerm(k){
   const g = GLOSS.find(x => x.k === k);
   if(!g) return;
   const url = g.img || (g.r && IMG[g.r] ? IMG[g.r][0] : null);
-  openSheet(g.t, g.d, url ? {url: url, photo: !!g.img} : null);
+  openSheet(g.t, linkify(g.d), url ? {url: url, photo: !!g.img} : null, true);
 }
 
 sheet.addEventListener('click', e => { if(e.target.hasAttribute('data-close')) closeTerm(); });
