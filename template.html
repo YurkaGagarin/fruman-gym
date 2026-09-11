@@ -1413,7 +1413,7 @@ const render = safe('отрисовка', function(){
     const top = document.createElement('div');
     top.className = 'card-top';
     top.innerHTML = '<span class="idx">' + String(i+1).padStart(2,'0') + '</span>'
-      + '<h3 class="name">' + mark(e.n, seen) + '</h3>'
+      + '<h3 class="name">' + esc(e.n) + '</h3>'   // название — ровный заголовок, термины подсвечиваются только в подсказке
       + '<span class="load">' + esc(e.l) + '</span>';
     card.appendChild(top);
 

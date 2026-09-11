@@ -53,6 +53,8 @@ Mind the name collision: `w` on an exercise means warm-up, while `w` in a weight
 
 A tuple `(key, title, explanation, image key or None, [patterns])`. The patterns are regular expressions that highlight the term inside the card text; `\w` in them is replaced by a character class that includes Cyrillic.
 
+Terms are highlighted in the cue and in the day's focus text, **never in a card name**: a highlighted term is a `<button>`, and inside `.name` it broke the title's colour, size and typeface on iOS. So a name carries no clickable word — keep the term the card needs in its cue instead, and note that each term highlights only once per day, first occurrence wins.
+
 A pattern must belong to one term only: the same pattern on two terms makes `whichTerm()` resolve by list order, so the highlighted word opens whichever term comes first.
 
 A bare `http(s)://` address inside the explanation becomes a link when the term card is opened; the visible label is the domain. That is the only markup allowed in an explanation — everything else is escaped.
