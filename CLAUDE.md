@@ -124,6 +124,8 @@ GitHub Pages, repository `YurkaGagarin/fruman-gym`, branch `main`, folder `/ (ro
 
 Pages does not rebuild instantly: right after a push the site still serves the previous build for a few dozen seconds. Check for a string from the new build, and check any new file under `assets/` separately — a fresh `index.html` with a missing image gives a broken card on the phone.
 
+A confirmed publication is not yet a visible change on the phone. The app sits on the home screen as a web clip with its own cache, and Pages sends `cache-control: max-age=600` on top of that, so the old page can keep showing for minutes after the check over HTTP has passed. When the user reports that a change is missing, verify the live file first, and only then treat it as a cache: swiping the app out of the task switcher and reopening it is what usually clears it; opening the address in Safari with a `?v=N` parameter is the fallback.
+
 ## Communication
 
 Short and to the point: the answer first, the details after. A yes/no question starts with «yes» or «no». Do not restate what was done and do not explain what things are for unless asked. When there is any doubt about the task, ask instead of filling the gap with a guess.
