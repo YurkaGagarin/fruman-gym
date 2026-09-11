@@ -59,6 +59,8 @@ The two frames under `assets/exercises/` come from `yuhonas/free-exercise-db` (p
 
 **The card must show the machine that is actually in the gym.** A generic illustration of the right movement on the wrong machine has already failed the user in the gym: he looks for the machine in the picture. Branded machines (this gym is Technogym) exist in no open exercise set, and the manufacturer's own renders are copyrighted while this repository is public. When the set has nothing that matches the real machine, use the gym photo from `assets/gym/` instead: copy it into `assets/exercises/` under a new key as both `_0` and `_1`. The frame is `aspect-ratio: 4/3`, so a 4:3 photo fits with no letterboxing. The cost is that the card loses its start-finish flip, and the `alt` text still says «начальная фаза» / «конечная фаза» for what is one picture.
 
+A frame brought in from the open set is normalised before it is committed: `sips --resampleWidth 320` and a re-encode at quality ~62, which lands it beside the others at 320 px wide and 8–15 KB. A raw download is 850 px and twice the weight, and the cards are served over a phone connection.
+
 The build collects keys from the file names (`IMG_KEYS` in `build.py` strips the last six characters), so any new key works with no other edit. Dropping `img` altogether is not the answer: every one of the 33 exercises has an illustration, and a card without a frame is the only one of its kind on the screen.
 
 ### Term format in `data/terms.py`
