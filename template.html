@@ -285,6 +285,7 @@ nav{position:sticky;top:0;padding-top:env(safe-area-inset-top);z-index:10;backgr
   text-align:center;
 }
 .log input:focus{outline:3px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.log input::placeholder, .exrow input::placeholder{color:var(--text);opacity:.38}
 .log input.filled{border-color:var(--accent-solid)}
 .last{appearance:none;background:transparent;border:0;padding:6px 2px;margin-left:auto;
   color:var(--accent);font-family:'Archivo',sans-serif;font-size:13px;font-weight:600;
@@ -988,6 +989,8 @@ function renderEx(i){
   if(wt){
     w.hidden = false;
     unit.hidden = false;
+    const prev = lastWeight(key);
+    w.placeholder = prev ? String(prev.w) : 'вес';
     w.value = todayWeight(key);
     w.oninput = () => { setWeight(key, w.value); };
   } else {
@@ -1448,7 +1451,8 @@ const render = safe('отрисовка', function(){
     inp.type = 'text';
     inp.inputMode = 'decimal';
     inp.id = 'w' + key.replace(':','_');
-    inp.placeholder = '—';
+    const prevW = lastWeight(key);
+    inp.placeholder = prevW ? String(prevW.w) : '—';   // прошлый вес виден там же, где вводится сегодняшний
     inp.value = todayWeight(key);
     inp.classList.toggle('filled', !!inp.value);
     inp.addEventListener('input', () => {
