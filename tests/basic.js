@@ -154,7 +154,30 @@ const click = el => el.dispatchEvent(new (el.ownerDocument.defaultView.MouseEven
   else ok('плашка показана: ' + b4.textContent.slice(0, 70) + '…');
   if (env4.errors.length) fail('ошибки без хранилища: ' + env4.errors.join(' | ')); else ok('без хранилища работает без ошибок');
 
-  console.log('\n=== 10. ИТОГ ===');
+  console.log('\n=== 10. ПОЛЕ ВЕСА ТАМ, ГДЕ ОНО НУЖНО ===');
+  const ALL = JSON.parse(HTML.match(/const DAYS = (\[.*?\]);\n/s)[1]);
+  const env5 = boot();
+  await tick(150);
+  let mismatch = 0;
+  for (let d = 0; d < ALL.length; d++) {
+    click(env5.doc.querySelectorAll('.tab')[d]); await tick(60);
+    const cs = env5.doc.querySelectorAll('#app .card');
+    ALL[d].ex.forEach((e, i) => {
+      const want = !e.nw && (!!e.wt || (!e.w && !e.t && !e.iv));
+      const got = !!cs[i].querySelector('.log');
+      if (want !== got) {
+        mismatch++;
+        fail('день ' + (d + 1) + ', карточка ' + (i + 1) + ' «' + e.n + '»: поле веса '
+          + (got ? 'есть, а не должно быть' : 'отсутствует, а должно быть'));
+      }
+    });
+  }
+  if (!mismatch) ok('поле веса стоит ровно там, где его ждёт hasWeight, во всех трёх днях');
+  const own = [];
+  ALL.forEach((d, di) => d.ex.forEach(e => { if (e.nw) own.push('день ' + (di + 1) + ' · ' + e.n); }));
+  ok('по собственному весу, без поля: ' + (own.length ? own.join(', ') : 'таких нет'));
+
+  console.log('\n=== 11. ИТОГ ===');
   console.log('провалов: ' + fails.length + ', предупреждений: ' + warns.length);
   if (fails.length) fails.forEach(f => console.log('  ✗ ' + f));
   if (warns.length) warns.forEach(f => console.log('  ! ' + f));

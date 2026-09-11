@@ -919,6 +919,7 @@ function fireExternal(sec){
 }
 /* поле веса: у всех силовых и у разминочных подходов с флагом wt */
 function hasWeight(e){
+  if(e.nw) return false;          // упражнение с собственным весом, записывать нечего
   return !!e.wt || (!e.w && !e.t && !e.iv);
 }
 function entries(key){
