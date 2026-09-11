@@ -39,7 +39,7 @@ The tests read the built `index.html`, not the template. So an edit to `template
 
 ### Exercise format in `data/program.py`
 
-The keys are short: `n` — name, `l` — the sets line («4 × 8–12»), `c` — cue, `img` — illustration key from `assets/exercises/` without the frame suffix (`_0` start, `_1` finish), `rest` — rest in seconds, `t` — duration for cardio, `hold` — hold, `iv` — intervals `[work, easy, rounds]`, `w: 1` — a warm-up exercise, `wt: 1` — a warm-up that still carries a weight.
+The keys are short: `n` — name, `l` — the sets line («4 × 8–12»), `c` — cue, `img` — illustration key from `assets/exercises/` without the frame suffix (`_0` start, `_1` finish) — see **Illustrations** below, `rest` — rest in seconds, `t` — duration for cardio, `hold` — hold, `iv` — intervals `[work, easy, rounds]`, `w: 1` — a warm-up exercise, `wt: 1` — a warm-up that still carries a weight.
 
 An exercise counts as a strength exercise (the one that gets set marks) when it has none of `w`, `t`, `iv` — this check is duplicated in the code and in the tests.
 
@@ -52,6 +52,14 @@ An exercise counts as a strength exercise (the one that gets set marks) when it 
 Mind the name collision: `w` on an exercise means warm-up, while `w` in a weight-journal entry is the weight itself.
 
 **The cue `c` is one dry line**, parts separated by ` · `: how the machine is set, the metric to watch, the pace. Nothing else. Keep at least one glossary word in it — `basic` warns when the first card of the day has no clickable term left. Explanation, theory and drills belong in the glossary, which is one tap away from the highlighted word — a cue written as an encyclopedia entry has already been rewritten once. The cue must not repeat what the card already shows: the sets line and the timer button both display the duration.
+
+### Illustrations
+
+The two frames under `assets/exercises/` come from `yuhonas/free-exercise-db` (public domain, 876 exercises, the same photo studio throughout) — that is where to look first for a new movement, and staying inside that one set is what keeps the cards a single visual system.
+
+**The card must show the machine that is actually in the gym.** A generic illustration of the right movement on the wrong machine has already failed the user in the gym: he looks for the machine in the picture. Branded machines (this gym is Technogym) exist in no open exercise set, and the manufacturer's own renders are copyrighted while this repository is public. When the set has nothing that matches the real machine, use the gym photo from `assets/gym/` instead: copy it into `assets/exercises/` under a new key as both `_0` and `_1`. The frame is `aspect-ratio: 4/3`, so a 4:3 photo fits with no letterboxing. The cost is that the card loses its start-finish flip, and the `alt` text still says «начальная фаза» / «конечная фаза» for what is one picture.
+
+The build collects keys from the file names (`IMG_KEYS` in `build.py` strips the last six characters), so any new key works with no other edit. Dropping `img` altogether is not the answer: every one of the 33 exercises has an illustration, and a card without a frame is the only one of its kind on the screen.
 
 ### Term format in `data/terms.py`
 
@@ -70,7 +78,8 @@ A bare `http(s)://` address inside the explanation becomes a link when the term 
 3. **Never inline images into `index.html`.** When they were stored as base64 the file weighed 2.1 MB and the preview cut it off in the middle of the script. It is 89 KB now.
 4. **The repository is public:** no recognisable bystanders in the gym photos.
 5. **Check the programme's numbers and facts against authoritative sources** before entering them.
-6. **One visual system: nothing new may look different from what is already on the screen.** The same kind of element carries the same typeface, case, size and colour on every card — before adding or renaming anything, look at the cards next to it, and if the change makes one card stand out, it is a defect, not a style. The trap that caught it: a name beginning with a glossary term turns the first words of the title into an orange dotted button, while the titles around it stay plain.
+6. **The four suites do not see the interface.** They read the built `index.html` and check behaviour, not layout: a highlighted term wrecking a card title and a weight field that looked empty were both found by the user on the phone while all four suites were green. After any change to the interface, write a throwaway jsdom script that prints what actually landed on the card — the attributes, the values, the classes, the text — and read that instead of assuming. Put it in `tests/` next to the others, because `jsdom` does not resolve from anywhere else, and delete it once it has been run.
+7. **One visual system: nothing new may look different from what is already on the screen.** The same kind of element carries the same typeface, case, size and colour on every card — before adding or renaming anything, look at the cards next to it, and if the change makes one card stand out, it is a defect, not a style. The trap that caught it: a name beginning with a glossary term turns the first words of the title into an orange dotted button, while the titles around it stay plain.
 
 ## Platform constraints that shape the code
 
