@@ -16,6 +16,7 @@ const sel=doc=>[...doc.querySelectorAll('.tab')].map(t=>t.getAttribute('aria-sel
  const store={};
  const e=boot(store); await tick(150);
  console.log('открылся день', sel(e.doc));
+ console.log('кнопка «Завершить день» до первой отметки:', e.doc.getElementById('finishDay').hidden ? 'скрыта' : 'видна');
  click(e.doc.querySelectorAll('#app .card')[IDX]); await tick(40);
  click(e.doc.querySelectorAll('#exsets .exset')[0]); await tick(40);
  click(e.doc.getElementById('fstop')); await tick(30);

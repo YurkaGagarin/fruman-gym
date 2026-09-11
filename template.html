@@ -435,7 +435,7 @@ footer p{margin:0 0 6px;font-size:13px}
   <div class="wrap">
     <div class="progline">
       <span id="progline">Идёт день 1</span>
-      <button class="finish" id="finishDay" type="button" hidden>Завершить день</button>
+      <button class="finish" id="finishDay" type="button">Завершить день</button>
     </div>
     <p class="banner" id="banner" hidden></p>
   </div>
@@ -888,15 +888,15 @@ function paintProgress(){
   const btn = document.getElementById('finishDay');
   if(!bar) return;
   const num = p.day + 1;
+  /* кнопка стоит всегда: день закрывают и без единой отметки */
+  btn.hidden = false;
   if(p.date === today()){
     const done = markedSets(p), total = totalSets(p.day);
     bar.textContent = done === 0
       ? 'Сегодня день ' + num + ' · отметок пока нет'
       : 'Идёт день ' + num + ' · отмечено ' + done + ' из ' + total + ' подходов';
-    btn.hidden = false;
   } else {
     bar.textContent = 'Следующая тренировка — день ' + num;
-    btn.hidden = true;
   }
 }
 const CFG_KEY = '__cfg';
