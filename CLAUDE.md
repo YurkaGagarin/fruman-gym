@@ -64,6 +64,7 @@ A bare `http(s)://` address inside the explanation becomes a link when the term 
 3. **Never inline images into `index.html`.** When they were stored as base64 the file weighed 2.1 MB and the preview cut it off in the middle of the script. It is 89 KB now.
 4. **The repository is public:** no recognisable bystanders in the gym photos.
 5. **Check the programme's numbers and facts against authoritative sources** before entering them.
+6. **One visual system: nothing new may look different from what is already on the screen.** The same kind of element carries the same typeface, case, size and colour on every card — before adding or renaming anything, look at the cards next to it, and if the change makes one card stand out, it is a defect, not a style. The trap that caught it: a name beginning with a glossary term turns the first words of the title into an orange dotted button, while the titles around it stay plain.
 
 ## Platform constraints that shape the code
 
