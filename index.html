@@ -990,12 +990,25 @@ function renderEx(i){
     w.hidden = false;
     unit.hidden = false;
     const prev = lastWeight(key);
-    w.placeholder = prev ? String(prev.w) : 'вес';
+    const basePh = prev ? String(prev.w) : 'вес';
+    w.placeholder = basePh;
     w.value = todayWeight(key);
-    w.oninput = () => { setWeight(key, w.value); };
+    // то же, что в карточке: тап очищает поле, бледным — то, что вернётся
+    let stash = '', typed = false;
+    w.onfocus = () => {
+      stash = w.value; typed = false;
+      if(stash){ w.placeholder = stash; w.value = ''; }
+    };
+    w.oninput = () => { typed = true; setWeight(key, w.value); };
+    w.onblur = () => {
+      if(!typed && stash) w.value = stash;
+      w.placeholder = basePh;
+    };
   } else {
     w.hidden = true;
+    w.onfocus = null;
     w.oninput = null;
+    w.onblur = null;
     unit.hidden = true;
   }
   if(e.t || e.iv){
@@ -1452,12 +1465,33 @@ const render = safe('отрисовка', function(){
     inp.inputMode = 'decimal';
     inp.id = 'w' + key.replace(':','_');
     const prevW = lastWeight(key);
-    inp.placeholder = prevW ? String(prevW.w) : '—';   // прошлый вес виден там же, где вводится сегодняшний
+    const basePh = prevW ? String(prevW.w) : '—';   // прошлый вес виден там же, где вводится сегодняшний
+    inp.placeholder = basePh;
     inp.value = todayWeight(key);
     inp.classList.toggle('filled', !!inp.value);
+    // тап очищает поле: набрать вес с нуля удобнее, чем править число с кареткой посередине;
+    // бледным остаётся то, что вернётся, если ничего не набрать
+    let stash = '', typed = false;
+    inp.addEventListener('focus', () => {
+      stash = inp.value; typed = false;
+      if(stash){
+        inp.placeholder = stash;
+        inp.value = '';
+        inp.classList.remove('filled');
+      }
+    });
     inp.addEventListener('input', () => {
+      typed = true;
       setWeight(key, inp.value);
       inp.classList.toggle('filled', !!inp.value.trim());
+      refreshLast();
+    });
+    inp.addEventListener('blur', () => {
+      if(!typed && stash){          // передумал — возвращаем как было, журнал не тронут
+        inp.value = stash;
+        inp.classList.add('filled');
+      }
+      inp.placeholder = basePh;
       refreshLast();
     });
     logRow.appendChild(inp);
