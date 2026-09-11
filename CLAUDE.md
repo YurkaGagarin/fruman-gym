@@ -92,7 +92,9 @@ The console has access to the script's top-level names: `cfg()`, `actx`, `wake`,
 
 ## Testing on the device
 
-An instruction for the phone is written out step by step, with nothing left implied: what has to be playing, whether the timer needs starting by hand, exactly where to tap, what to listen for and where to look afterwards.
+**A measurement is written out step by step, an ordinary check is not.** A measurement — anything where an omitted step invalidates the result: audio and `wakeLock` runs, a Web Inspector session, a console command, a protocol that has to be repeated identically later. There nothing is left implied: what has to be playing, whether the timer needs starting by hand, exactly where to tap, what to listen for, what not to touch.
+
+A check of a published change is the opposite: name what to look at and what would count as wrong, in a few lines. The user knows his own app — «посмотри карточку 03 во втором дне: под кнопкой отсчёта должна быть строка с весом» is the right size, a numbered list of taps is not. The one step worth keeping even here is closing the app from the switcher, because the icon serves the old page. Full detail on a practical check only when the user asks for it.
 
 Phone settings that affect the measurements: auto-lock is normally set to «Никогда» (it has to be set to 30 seconds to prove that the screen is being held), Low Power Mode is off, and the default browser is Chrome. The last one does not affect debugging — an app launched from the icon runs in the system WebKit, and that is exactly what Web Inspector attaches to.
 
