@@ -995,18 +995,23 @@ function renderEx(i){
     w.value = todayWeight(key);
     // то же, что в карточке: тап очищает поле, бледным — то, что вернётся
     let stash = '', typed = false;
-    w.onfocus = () => {
+    const armEx = () => {
+      if(!w.value) return;
       stash = w.value; typed = false;
-      if(stash){ w.placeholder = stash; w.value = ''; }
+      w.placeholder = stash; w.value = '';
     };
+    w.onfocus = armEx;
+    w.onclick = armEx;
     w.oninput = () => { typed = true; setWeight(key, w.value); };
     w.onblur = () => {
       if(!typed && stash) w.value = stash;
+      stash = ''; typed = false;
       w.placeholder = basePh;
     };
   } else {
     w.hidden = true;
     w.onfocus = null;
+    w.onclick = null;
     w.oninput = null;
     w.onblur = null;
     unit.hidden = true;
@@ -1472,14 +1477,18 @@ const render = safe('отрисовка', function(){
     // тап очищает поле: набрать вес с нуля удобнее, чем править число с кареткой посередине;
     // бледным остаётся то, что вернётся, если ничего не набрать
     let stash = '', typed = false;
-    inp.addEventListener('focus', () => {
-      stash = inp.value; typed = false;
-      if(stash){
-        inp.placeholder = stash;
-        inp.value = '';
-        inp.classList.remove('filled');
-      }
-    });
+    // очищаем и по фокусу, и по тапу: повторный тап по уже активному полю
+    // события focus не даёт — клавиатура не опускалась, фокус не терялся
+    function armField(){
+      if(!inp.value) return;      // уже пусто — повторный вызов не трогает сохранённое
+      stash = inp.value;
+      typed = false;
+      inp.placeholder = stash;
+      inp.value = '';
+      inp.classList.remove('filled');
+    }
+    inp.addEventListener('focus', armField);
+    inp.addEventListener('click', armField);
     inp.addEventListener('input', () => {
       typed = true;
       setWeight(key, inp.value);
@@ -1491,6 +1500,7 @@ const render = safe('отрисовка', function(){
         inp.value = stash;
         inp.classList.add('filled');
       }
+      stash = ''; typed = false;
       inp.placeholder = basePh;
       refreshLast();
     });
