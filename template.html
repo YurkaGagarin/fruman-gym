@@ -142,7 +142,7 @@ nav{position:sticky;top:0;padding-top:env(safe-area-inset-top);z-index:10;backgr
   font-size:clamp(20px,6vw,30px);line-height:1.06;text-transform:uppercase;color:var(--text);
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
 }
-.exrow{flex:0 0 auto;display:flex;align-items:center;gap:10px}
+.exrow{flex:0 0 auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .exload{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:15px;
   background:var(--accent-solid);color:var(--on-accent);padding:9px 12px;border-radius:10px;
   white-space:nowrap}
@@ -157,6 +157,7 @@ nav{position:sticky;top:0;padding-top:env(safe-area-inset-top);z-index:10;backgr
 .extimer{flex:1;min-height:48px;margin-left:auto;appearance:none;cursor:pointer;
   background:transparent;border:2px solid var(--accent);color:var(--accent);border-radius:12px;
   font-family:'Archivo',sans-serif;font-size:15px;font-weight:700}
+.extimer.full{flex:1 1 100%;margin-left:0}
 
 .exframe{
   flex:1 1 auto;min-height:0;position:relative;width:100%;
@@ -915,6 +916,10 @@ function fireExternal(sec){
     window.location.href = url;
   }catch(err){}
 }
+/* поле веса: у всех силовых и у разминочных подходов с флагом wt */
+function hasWeight(e){
+  return !!e.wt || (!e.w && !e.t && !e.iv);
+}
 function entries(key){
   const v = LOG[key];
   if(!Array.isArray(v)) return [];
@@ -976,14 +981,24 @@ function renderEx(i){
   const key = current + ':' + i;
   const w = document.getElementById('exweight');
   const row = document.querySelector('.exrow');
+  const unit = document.querySelector('.exrow .unit');
   const old = document.getElementById('extimer');
   if(old) old.remove();
-  if(e.t || e.iv){
+  const wt = hasWeight(e);
+  if(wt){
+    w.hidden = false;
+    unit.hidden = false;
+    w.value = todayWeight(key);
+    w.oninput = () => { setWeight(key, w.value); };
+  } else {
     w.hidden = true;
     w.oninput = null;
-    document.querySelector('.exrow .unit').hidden = true;
+    unit.hidden = true;
+  }
+  if(e.t || e.iv){
     const tb = document.createElement('button');
-    tb.type = 'button'; tb.id = 'extimer'; tb.className = 'extimer';
+    tb.type = 'button'; tb.id = 'extimer';
+    tb.className = wt ? 'extimer full' : 'extimer';
     tb.textContent = e.iv
       ? 'Интервалы · ' + e.iv[2] + ' × (' + Math.round(e.iv[0]/60) + ' / ' + Math.round(e.iv[1]/60) + ' мин)'
       : 'Старт · ' + (e.t >= 60 ? Math.round(e.t/60) + ' мин' : e.t + ' сек');
@@ -992,11 +1007,6 @@ function renderEx(i){
       else startTimer(e.t, e.n.toLowerCase());
     });
     row.appendChild(tb);
-  } else {
-    w.hidden = false;
-    document.querySelector('.exrow .unit').hidden = false;
-    w.value = todayWeight(key);
-    w.oninput = () => { setWeight(key, w.value); };
   }
 
   const box = document.getElementById('exsets');
@@ -1477,7 +1487,7 @@ const render = safe('отрисовка', function(){
       openSheet(e.n, text, IMG[e.img] ? {url: IMG[e.img][0], photo: false} : null);
     });
     logRow.appendChild(last);
-    if(!e.w && !e.t && !e.iv) card.appendChild(logRow);
+    if(hasWeight(e)) card.appendChild(logRow);
 
     const st = document.createElement('span');
     st.className = 'stat ' + (e.s === 'ok' ? 'ok' : 'check');

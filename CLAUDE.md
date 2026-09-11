@@ -39,9 +39,11 @@ The tests read the built `index.html`, not the template. So an edit to `template
 
 ### Exercise format in `data/program.py`
 
-The keys are short: `n` — name, `l` — the sets line («4 × 8–12»), `c` — cue, `img` — illustration key from `assets/exercises/` without the frame suffix (`_0` start, `_1` finish), `rest` — rest in seconds, `t` — duration for cardio, `hold` — hold, `iv` — intervals `[work, easy, rounds]`, `w: 1` — a warm-up exercise.
+The keys are short: `n` — name, `l` — the sets line («4 × 8–12»), `c` — cue, `img` — illustration key from `assets/exercises/` without the frame suffix (`_0` start, `_1` finish), `rest` — rest in seconds, `t` — duration for cardio, `hold` — hold, `iv` — intervals `[work, easy, rounds]`, `w: 1` — a warm-up exercise, `wt: 1` — a warm-up that still carries a weight.
 
-An exercise counts as a strength exercise (the one that gets set marks and a weight field) when it has none of `w`, `t`, `iv` — this check is duplicated in the code and in the tests.
+An exercise counts as a strength exercise (the one that gets set marks) when it has none of `w`, `t`, `iv` — this check is duplicated in the code and in the tests.
+
+**The weight field is decided separately**, by `hasWeight()`: every strength exercise has one, and so does a warm-up marked `wt: 1` — a warm-up set done on a stack machine, where the number set on the stack is worth remembering from one session to the next. `wt` changes nothing else: the card keeps its countdown button, stays under «Разминка», gets no set square and does not move the day's set count. The weight lands in the journal under the usual `day:index` key, so history, «прошлый раз», export and import pick it up with no extra code. In the full-screen card the countdown button then moves to its own line (`.extimer.full`) instead of squeezing in beside the input.
 
 Mind the name collision: `w` on an exercise means warm-up, while `w` in a weight-journal entry is the weight itself.
 
