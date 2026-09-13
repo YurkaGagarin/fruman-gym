@@ -4,3 +4,4 @@ HANDOFF.md
 docs/images/
 SESSION-HANDOFF.md
 SESSION-HANDOFF.prev.md
+__pycache__/
