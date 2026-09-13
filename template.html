@@ -237,7 +237,9 @@ nav{position:sticky;top:0;padding-top:env(safe-area-inset-top);z-index:10;backgr
 /* --- таймер --- */
 .tbar[hidden]{display:none}
 .tbar{
-  position:fixed;left:0;right:0;bottom:0;z-index:40;
+  /* карточка упражнения лежит на 42: с меньшим z-index свернутый отсчёт уходит под неё
+     и из карточки его не видно вовсе. Полноэкранный отсчёт (45) остаётся выше панели */
+  position:fixed;left:0;right:0;bottom:0;z-index:44;
   background:var(--surface);border-top:2px solid var(--accent-solid);
   padding:10px 12px calc(10px + env(safe-area-inset-bottom));
   display:flex;align-items:center;gap:8px;
@@ -246,6 +248,9 @@ nav{position:sticky;top:0;padding-top:env(safe-area-inset-top);z-index:10;backgr
 .tbar.run:active{filter:brightness(.92)}
 .tbar.run .tbtn{border-color:var(--on-accent);color:var(--on-accent)}
 .tbar.done{animation:flash 0.5s steps(1,end) 6}
+/* панель стоит поверх карточки, поэтому карточке нужен отступ снизу,
+   иначе панель закрывает «Назад» и «Следующее упражнение» */
+.exview.withbar .exbody{padding-bottom:calc(72px + env(safe-area-inset-bottom))}
 @keyframes flash{0%{background:var(--accent-solid)}50%{background:var(--surface)}}
 .tdisp{
   font-family:'JetBrains Mono',monospace;font-weight:700;font-size:26px;
@@ -1025,6 +1030,7 @@ function renderEx(i){
       ? 'Интервалы · ' + e.iv[2] + ' × (' + Math.round(e.iv[0]/60) + ' / ' + Math.round(e.iv[1]/60) + ' мин)'
       : 'Старт · ' + (e.t >= 60 ? Math.round(e.t/60) + ' мин' : e.t + ' сек');
     tb.addEventListener('click', () => {
+      armReturn(i);
       if(e.iv) startIntervals(e.iv[0], e.iv[1], e.iv[2]);
       else startTimer(e.t, e.n.toLowerCase());
     });
@@ -1061,6 +1067,7 @@ function renderEx(i){
         }, 550);
       } else if(arr[si] && !e.w){
         const done = arr.filter(Boolean).length;
+        armReturn(i);
         startTimer(e.rest || 90, 'отдых', e.n + ' · дальше подход ' + (done + 1) + ' из ' + arr.length);
       }
     });
@@ -1199,6 +1206,7 @@ trfg.style.strokeDasharray = RING;
 trfg.style.strokeDashoffset = 0;
 
 let tEnd = 0, tTick = null, tPhases = null, tIdx = 0, actx = null, wake = null;
+let tEx = -1, tExDay = -1;               // упражнение, из которого запущен отсчёт
 let actxAt = 0, actxWall = 0;            // чем распознаём зависший контекст
 
 const SESS_IDLE = 'auto';
@@ -1259,7 +1267,17 @@ async function keepAwake(on){
 }
 function showFull(on){
   tfull.hidden = !on;
-  document.body.style.overflow = on ? 'hidden' : '';
+  // под отсчётом может лежать открытая карточка упражнения — ей прокрутка тела тоже мешает
+  document.body.style.overflow = (on || !exview.hidden) ? 'hidden' : '';
+}
+/* отсчёт кончился — открываем карточку того упражнения, из которого он запущен:
+   в зале дальше нужен следующий подход, а не то место списка, где человек стоял.
+   По кнопке «Стоп» не вызывается: это осознанный выход, экран дёргать незачем */
+function armReturn(i){ tEx = i; tExDay = current; }
+function returnToEx(){
+  if(tEx < 0 || tExDay !== current) return;      // день переключили — не дёргаем экран
+  if(!exview.hidden && exIdx === tEx) return;    // уже на нужной карточке
+  openEx(tEx);
 }
 function paintRing(left){
   const frac = tTotal > 0 ? Math.max(0, Math.min(1, left / tTotal)) : 0;
@@ -1272,11 +1290,13 @@ function tRunning(on){
   if(on) tbar.setAttribute('aria-label', 'Развернуть таймер на весь экран');
   else tbar.removeAttribute('aria-label');
   tbar.hidden = !on;
+  exview.classList.toggle('withbar', on);
   keepAwake(on);
 }
 function stopTimer(){
   stopTrack();
   setSession(SESS_IDLE);
+  tEx = -1; tExDay = -1;
   clearInterval(tTick); tTick = null; tPhases = null;
   tdisp.textContent = '--:--';
   tlabel.textContent = 'таймер';
@@ -1331,6 +1351,7 @@ function tickFn(){
   beep(3, 990);
   tbar.classList.add('done');
   tRunning(false);
+  returnToEx();
   setTimeout(() => { if(!tTick) stopTimer(); }, 6000);
 }
 function startPhases(phases, hint){
@@ -1452,6 +1473,7 @@ const render = safe('отрисовка', function(){
         : 'Старт · ' + (e.t >= 60 ? Math.round(e.t/60) + ' мин' : e.t + ' сек');
       tb.addEventListener('click', ev => {
         ev.stopPropagation();
+        armReturn(i);
         if(e.iv) startIntervals(e.iv[0], e.iv[1], e.iv[2]);
         else startTimer(e.t, e.n.toLowerCase());
       });
@@ -1551,7 +1573,7 @@ const render = safe('отрисовка', function(){
       const hb = document.createElement('button');
       hb.type = 'button'; hb.className = 'hold';
       hb.textContent = 'Отсчёт ' + e.hold + ' сек';
-      hb.addEventListener('click', ev => { ev.stopPropagation(); startTimer(e.hold, e.n.toLowerCase()); });
+      hb.addEventListener('click', ev => { ev.stopPropagation(); armReturn(i); startTimer(e.hold, e.n.toLowerCase()); });
       bottom.appendChild(hb);
       needBottom = true;
     }

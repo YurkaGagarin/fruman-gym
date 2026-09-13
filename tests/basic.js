@@ -177,7 +177,55 @@ const click = el => el.dispatchEvent(new (el.ownerDocument.defaultView.MouseEven
   ALL.forEach((d, di) => d.ex.forEach(e => { if (e.nw) own.push('день ' + (di + 1) + ' · ' + e.n); }));
   ok('по собственному весу, без поля: ' + (own.length ? own.join(', ') : 'таких нет'));
 
-  console.log('\n=== 11. ИТОГ ===');
+  console.log('\n=== 11. ВОЗВРАТ В КАРТОЧКУ ПОСЛЕ ОТСЧЁТА ===');
+  // свернутая панель должна лежать выше карточки упражнения, иначе из карточки её не видно
+  const zOf = sel => {
+    const m = new RegExp('\\' + sel + '\\{[^}]*z-index:(\\d+)', 's').exec(HTML);
+    return m ? +m[1] : NaN;
+  };
+  const zBar = zOf('.tbar'), zEx = zOf('.exview'), zFull = zOf('.tfull');
+  if (!(zEx < zBar && zBar < zFull))
+    fail('порядок слоёв нарушен: карточка ' + zEx + ', панель ' + zBar + ', полный экран ' + zFull);
+  else ok('слои: карточка ' + zEx + ' < панель ' + zBar + ' < полный экран ' + zFull);
+
+  const env6 = boot();
+  await tick(150);
+  const doc6 = env6.doc, win6 = env6.win;
+  const ex6 = doc6.getElementById('exview');
+  click(doc6.querySelectorAll('#app .card')[idx]); await tick(60);
+  let sets6 = doc6.querySelectorAll('#exsets .exset');
+  click(sets6[0]); await tick(40);
+  if (doc6.getElementById('tfull').hidden) fail('отсчёт отдыха не запустился');
+  click(doc6.getElementById('fmin')); await tick(40);
+  if (doc6.getElementById('tbar').hidden) fail('свернутая панель не показана');
+  else ok('панель показана после «Свернуть»');
+  if (!ex6.classList.contains('withbar')) fail('карточке не дан отступ под панель таймера');
+  else ok('карточка отодвинута от панели');
+
+  click(doc6.getElementById('exclose')); await tick(400);
+  if (!ex6.hidden) fail('карточка не закрылась');
+  // отматываем часы вперёд — отсчёт досчитывает на ближайшем тике
+  const realNow = win6.Date.now.bind(win6.Date);
+  win6.Date.now = () => realNow() + 3600000;
+  await tick(500);
+  win6.Date.now = realNow;
+  if (ex6.hidden) fail('после отсчёта карточка упражнения не открылась');
+  else ok('после отсчёта открыта карточка: ' + doc6.getElementById('exname').textContent);
+  if (ex6.classList.contains('withbar')) fail('отступ под панель остался, когда панели нет');
+
+  // по «Стоп» возврата быть не должно: это осознанный выход
+  await tick(700);
+  sets6 = doc6.querySelectorAll('#exsets .exset');
+  click(sets6[1]); await tick(40);
+  click(doc6.getElementById('fmin')); await tick(40);
+  click(doc6.getElementById('exclose')); await tick(400);
+  click(doc6.getElementById('tstop')); await tick(300);
+  if (!ex6.hidden) fail('«Стоп» открыл карточку упражнения, а не должен');
+  else ok('«Стоп» экран не дёргает');
+  if (env6.errors.length) fail('ошибки в сценарии возврата: ' + env6.errors.join(' | '));
+  else ok('сценарий возврата без ошибок');
+
+  console.log('\n=== 12. ИТОГ ===');
   console.log('провалов: ' + fails.length + ', предупреждений: ' + warns.length);
   if (fails.length) fails.forEach(f => console.log('  ✗ ' + f));
   if (warns.length) warns.forEach(f => console.log('  ! ' + f));
