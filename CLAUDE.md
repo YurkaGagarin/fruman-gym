@@ -69,7 +69,7 @@ The whole set is one JSON file — `raw.githubusercontent.com/yuhonas/free-exerc
 
 A frame brought in from the open set is normalised before it is committed: `sips --resampleWidth 320` and a re-encode at quality ~62, which lands it beside the others at 320 px wide and 8–15 KB. A raw download is 850 px and twice the weight, and the cards are served over a phone connection.
 
-The build collects keys from the file names (`IMG_KEYS` in `build.py` strips the last six characters), so any new key works with no other edit. **A key is in use if it appears in `data/program.py` **or** in `data/terms.py`:** a glossary term illustrates itself with `ref:<key>`, which points at the same frames. Six orphan frames were deleted on 13 September 2026 after checking both files; `Cable_Crossover` and `Leg_Press` sit on no card at all and are kept alive only by that `ref:`. Dropping `img` altogether is not the answer: every one of the 33 exercises has an illustration, and a card without a frame is the only one of its kind on the screen.
+The build collects keys from the file names (`IMG_KEYS` in `build.py` strips the last six characters), so any new key works with no other edit. **A key is in use if it appears in `data/program.py` or in `data/terms.py`:** a glossary term illustrates itself with `ref:<key>`, which points at the same frames. Six orphan frames were deleted on 13 September 2026 after checking both files; `Cable_Crossover` and `Leg_Press` sit on no card at all and are kept alive only by that `ref:`. Dropping `img` altogether is not the answer: every one of the 33 exercises has an illustration, and a card without a frame is the only one of its kind on the screen.
 
 ### Term format in `data/terms.py`
 
