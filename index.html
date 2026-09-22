@@ -322,10 +322,6 @@ nav{position:sticky;top:0;padding-top:env(safe-area-inset-top);z-index:10;backgr
 .log input:focus{outline:3px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
 .log input::placeholder, .exrow input::placeholder{color:var(--text);opacity:.38}
 .log input.filled{border-color:var(--accent-solid)}
-.last{appearance:none;background:transparent;border:0;padding:6px 2px;margin-left:auto;
-  color:var(--accent);font-family:'Archivo',sans-serif;font-size:var(--fs-s);font-weight:600;
-  cursor:pointer;text-align:right;border-bottom:2px dotted var(--accent)}
-.last.empty{color:var(--text);border-bottom:0;cursor:default}
 .progline{display:flex;align-items:center;gap:10px;flex-wrap:wrap;
   background:var(--surface);border-radius:var(--radius);padding:14px 16px;margin-top:16px}
 .progline span{font-family:'Archivo',sans-serif;font-size:var(--fs-s);font-weight:700;
@@ -345,7 +341,6 @@ nav{position:sticky;top:0;padding-top:env(safe-area-inset-top);z-index:10;backgr
 .stat{display:inline-flex;align-items:center;gap:6px;margin-top:10px;
   font-family:'Archivo',sans-serif;font-size:var(--fs-s);font-weight:700;
   letter-spacing:.1em;text-transform:uppercase;padding:5px 9px;border-radius:6px}
-.stat.ok{background:var(--surface-2);color:var(--text);border:1px solid var(--line)}
 .stat.check{background:var(--accent-solid);color:var(--on-accent)}
 
 .card-bottom{display:flex;align-items:center;gap:12px;margin-top:14px;
@@ -484,7 +479,7 @@ footer p{margin:0 0 6px;font-size:var(--fs-s)}
       <h2>Что решает результат</h2>
       <div class="note">
         <h4>Метки на карточках</h4>
-        <p><b>Тренажёр подтверждён</b> — я видел его на твоих фото и знаю, где он стоит. <b>Проверить в зале</b> — упражнение в программе оставлено, но железку я на снимках не нашёл. Скинь фото — сниму метку или заменю упражнение.</p>
+        <p><b>Проверить в зале</b> — упражнение в программе оставлено, но железку я на снимках не нашёл. Скинь фото — сниму метку или заменю упражнение.</p>
       </div>
       <div class="note">
         <h4>Прогрессия</h4>
@@ -1574,7 +1569,6 @@ const render = safe('отрисовка', function(){
       typed = true;
       setWeight(key, inp.value);
       inp.classList.toggle('filled', !!inp.value.trim());
-      refreshLast();
     });
     inp.addEventListener('blur', () => {
       if(!typed && stash){          // передумал — возвращаем как было, журнал не тронут
@@ -1583,45 +1577,17 @@ const render = safe('отрисовка', function(){
       }
       stash = ''; typed = false;
       inp.placeholder = basePh;
-      refreshLast();
     });
     logRow.appendChild(inp);
 
-    const last = document.createElement('button');
-    last.type = 'button';
-    function refreshLast(){
-      const prev = lastWeight(key);
-      const cur = parseFloat(String(inp.value).replace(',','.'));
-      if(!prev){
-        last.className = 'last empty';
-        last.textContent = entries(key).length ? 'история' : 'первый раз';
-        last.disabled = !entries(key).length;
-        return;
-      }
-      last.className = 'last';
-      last.disabled = false;
-      let txt = 'прошлый раз ' + prev.w + ' кг';
-      if(!isNaN(cur) && cur !== prev.w){
-        const diff = Math.round((cur - prev.w) * 10) / 10;
-        txt += '  ' + (diff > 0 ? '+' : '') + diff;
-      }
-      last.textContent = txt;
-    }
-    refreshLast();
-    last.addEventListener('click', () => {
-      const list = entries(key);
-      const text = list.length
-        ? list.slice().reverse().map(x => ruDate(x.d) + ' — ' + x.w + ' кг').join(NL)
-        : 'Записей пока нет.';
-      openSheet(e.n, text, IMG[e.img] ? {url: IMG[e.img][0], photo: false} : null);
-    });
-    logRow.appendChild(last);
     if(hasWeight(e)) card.appendChild(logRow);
 
-    const st = document.createElement('span');
-    st.className = 'stat ' + (e.s === 'ok' ? 'ok' : 'check');
-    st.textContent = e.s === 'ok' ? '✓ тренажёр подтверждён' : '? проверить в зале';
-    card.appendChild(st);
+    if(e.s !== 'ok'){             // метка только на неподтверждённом тренажёре
+      const st = document.createElement('span');
+      st.className = 'stat check';
+      st.textContent = '? проверить в зале';
+      card.appendChild(st);
+    }
 
     const bottom = document.createElement('div');
     bottom.className = 'card-bottom';
