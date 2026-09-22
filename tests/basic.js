@@ -183,10 +183,10 @@ const click = el => el.dispatchEvent(new (el.ownerDocument.defaultView.MouseEven
     const m = new RegExp('\\' + sel + '\\{[^}]*z-index:(\\d+)', 's').exec(HTML);
     return m ? +m[1] : NaN;
   };
-  const zBar = zOf('.tbar'), zEx = zOf('.exview'), zFull = zOf('.tfull');
-  if (!(zEx < zBar && zBar < zFull))
-    fail('порядок слоёв нарушен: карточка ' + zEx + ', панель ' + zBar + ', полный экран ' + zFull);
-  else ok('слои: карточка ' + zEx + ' < панель ' + zBar + ' < полный экран ' + zFull);
+  const zBar = zOf('.tbar'), zEx = zOf('.exview'), zFull = zOf('.tfull'), zSheet = zOf('.sheet');
+  if (!(zEx < zBar && zBar < zFull && zFull < zSheet))
+    fail('порядок слоёв нарушен: карточка ' + zEx + ', панель ' + zBar + ', полный экран ' + zFull + ', словарь ' + zSheet);
+  else ok('слои: карточка ' + zEx + ' < панель ' + zBar + ' < полный экран ' + zFull + ' < словарь ' + zSheet);
 
   const env6 = boot();
   await tick(150);
