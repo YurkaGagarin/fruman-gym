@@ -5,7 +5,7 @@ The repository is written in English, the conversation is in Russian: the user w
 ## Where the rest is written down
 
 - `README.md` — the file tree and the build commands, in Russian, for a human visitor.
-- `HANDOFF.md` — who the user is, decisions not to reopen, and how he communicates: what the
+- `HANDOFF.md` — who the user is, decisions not to reopen, how he communicates, and open tasks when there are any: what the
   code does not record. Outside git: the repository is public and the file carries personal
   detail. Read it when a session starts.
 - `docs/device.md` — Web Inspector on the iPhone, and how to write a measurement or a check for the user's phone. Read it before any on-device run or instruction.
