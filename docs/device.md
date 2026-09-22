@@ -1,6 +1,6 @@
 # Work on the device
 
-What the project's `CLAUDE.md` does not carry every session: attaching a console to the live app, and writing measurements and checks for the user's phone.
+What the project's `CLAUDE.md` does not carry every session: attaching a console to the live app, and writing measurements and checks for the user's phone. What the console names mean and which calls work only inside a touch: `CLAUDE.md`, «Platform constraints that shape the code», and `docs/research/audio-session-matrix.md`. «The switcher» below is the iOS app switcher: swiping the app away there closes it.
 
 ## Debugging on the device
 
