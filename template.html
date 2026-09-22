@@ -46,18 +46,12 @@ body{
 .wrap{max-width:640px;margin:0 auto;padding:0 16px}
 
 header{padding:calc(28px + env(safe-area-inset-top)) 16px 24px;border-bottom:2px solid var(--accent-solid)}
-.eyebrow{
-  font-family:'Archivo',sans-serif;font-size:var(--fs-s);font-weight:700;
-  letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin:0 0 10px;
-}
 h1{
   font-family:'Archivo Narrow',sans-serif;font-weight:700;
   font-size:clamp(30px,9vw,42px);line-height:1.03;text-transform:uppercase;
-  color:var(--text);margin:0 0 12px;
+  color:var(--text);margin:0;
 }
 h1 em{font-style:normal;color:var(--accent)}
-.sub{color:var(--text);font-size:var(--fs-m);font-weight:500;margin:0}
-.sub b{font-weight:700;color:var(--accent)}
 
 nav{position:sticky;top:0;padding-top:env(safe-area-inset-top);z-index:10;background:var(--bg);padding:10px 0;
   border-bottom:1px solid var(--line)}
@@ -338,7 +332,6 @@ nav{position:sticky;top:0;padding-top:env(safe-area-inset-top);z-index:10;backgr
   background:currentColor;margin-left:6px;vertical-align:middle}
 .banner{background:var(--accent-solid);color:var(--on-accent);border-radius:10px;
   padding:12px 14px;margin:12px 0 0;font-size:var(--fs-s);font-weight:600}
-.banner.ok{background:var(--surface);color:var(--text);border:2px solid var(--accent-solid)}
 .banner.err{background:#FFFFFF;color:#8A1500;border:2px solid #8A1500;
   font-family:'Archivo',sans-serif;font-size:var(--fs-s);line-height:1.4;font-weight:700}
 .stat{display:inline-flex;align-items:center;gap:6px;margin-top:10px;
@@ -454,9 +447,7 @@ footer p{margin:0 0 6px;font-size:var(--fs-s)}
 <div class="page">
 
   <header class="block">
-    <p class="eyebrow">Icon Fitness Модиин · Technogym</p>
     <h1>Грудь, плечи,<br><em>руки</em></h1>
-    <p class="sub">3 раза в неделю · около <b>80 минут</b> · отдых <b>60 сек</b> · между тренировками минимум <b>один день</b></p>
   </header>
 
   <nav>
@@ -849,13 +840,6 @@ function showBanner(){
   const b = document.getElementById('banner');
   if(!b) return;
   b.textContent = 'Здесь веса держатся только до перезагрузки — это предпросмотр. Открой страницу по её адресу в интернете, и записи начнут сохраняться сами. А пока перед выходом жми «Скопировать журнал» внизу.';
-  b.hidden = false;
-}
-function showSaved(){
-  const b = document.getElementById('banner');
-  if(!b) return;
-  b.className = 'banner ok';
-  b.textContent = 'Веса сохраняются автоматически в памяти браузера — можно закрывать файл, записи останутся.';
   b.hidden = false;
 }
 const PROG_KEY = '__prog';
@@ -1855,8 +1839,7 @@ const boot = safe('запуск', async function(){
   render();
   markStatic(document.querySelector('header'));
   markStatic(document.querySelector('.notes'));
-  if(!canPersist) showBanner();
-  else if(mode === 'local') showSaved();
+  if(!canPersist) showBanner();   // говорим только о беде: когда веса сохраняются, плашки нет
 });
 boot();
 </script>

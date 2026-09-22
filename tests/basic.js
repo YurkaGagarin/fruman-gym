@@ -26,6 +26,9 @@ function boot(opts = {}) {
         };
       };
       win.navigator.vibrate = () => true;
+      // память браузера тоже закрыта — как в просмотрщике и на file:, иначе приложение
+      // честно сохраняет туда и предупреждать не о чем
+      if (opts.noLocal) Object.defineProperty(win, 'localStorage', { configurable: true, get() { throw new Error('localStorage недоступен'); } });
       if (opts.storage !== false) {
         win.storage = {
           async get(k) { if (!(k in store)) throw new Error('нет ключа'); return { key: k, value: store[k] }; },
@@ -147,10 +150,10 @@ const click = el => el.dispatchEvent(new (el.ownerDocument.defaultView.MouseEven
   else ok('в описании упражнения терминов: ' + inner);
 
   console.log('\n=== 9. БЕЗ ХРАНИЛИЩА ===');
-  let env4 = boot({ storage: false });
+  let env4 = boot({ storage: false, noLocal: true });
   await tick(150);
   const b4 = env4.doc.getElementById('banner');
-  if (b4.hidden) warn('плашка о недоступном сохранении не показана');
+  if (b4.hidden || !/до перезагрузки/.test(b4.textContent)) warn('плашка о недоступном сохранении не показана: ' + (b4.hidden ? 'скрыта' : b4.textContent.slice(0, 60)));
   else ok('плашка показана: ' + b4.textContent.slice(0, 70) + '…');
   if (env4.errors.length) fail('ошибки без хранилища: ' + env4.errors.join(' | ')); else ok('без хранилища работает без ошибок');
 

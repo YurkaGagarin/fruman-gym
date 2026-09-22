@@ -19,6 +19,9 @@ function boot(opts = {}) {
         createOscillator: () => ({ frequency: {}, connect() {}, start() {}, stop() {} }),
         createGain: () => ({ gain: { setValueAtTime() {}, exponentialRampToValueAtTime() {} }, connect() {} }) }; };
       win.navigator.vibrate = () => true;
+      // память браузера тоже закрыта — как в просмотрщике и на file:, иначе приложение
+      // честно сохраняет туда и предупреждать не о чем
+      if (opts.noLocal) Object.defineProperty(win, 'localStorage', { configurable: true, get() { throw new Error('localStorage недоступен'); } });
       if (opts.storage !== false) {
         win.storage = {
           async get(k) { if (opts.getThrows) throw new Error('get сломан'); if (!(k in store)) throw new Error('нет ключа'); return { key: k, value: store[k] }; },
@@ -41,10 +44,10 @@ const setVal = (el, v) => { el.value = v; el.dispatchEvent(new (el.ownerDocument
     .findIndex(e => !e.w && !e.t && !e.iv);
 
   console.log('\n=== 11. ХРАНИЛИЩЕ ОТКАЗЫВАЕТ НА ЗАПИСИ (как в просмотрщике) ===');
-  let e = boot({ setThrows: true });
+  let e = boot({ setThrows: true, noLocal: true });
   await tick(150);
   const b = e.doc.getElementById('banner');
-  if (b.hidden) fail('плашка не показана при отказе записи');
+  if (b.hidden || !/до перезагрузки/.test(b.textContent)) fail('плашка не показана при отказе записи: ' + (b.hidden ? 'скрыта' : b.textContent.slice(0, 60)));
   else ok('плашка: ' + b.textContent.slice(0, 60) + '…');
   const cards = e.doc.querySelectorAll('#app .card');
   click(cards[IDX]); await tick(40);
