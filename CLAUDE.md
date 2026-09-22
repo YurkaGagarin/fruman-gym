@@ -85,19 +85,19 @@ The two frames under `assets/exercises/` come from `yuhonas/free-exercise-db` (p
 
 The whole set is one JSON file — `raw.githubusercontent.com/yuhonas/free-exercise-db/main/dist/exercises.json`, with name, equipment, muscles and frame paths for each entry — so searching it for a replacement movement is a single request, and the frames themselves come from `.../main/exercises/<id>/0.jpg` and `1.jpg`.
 
-A frame brought in from the open set is normalised before it is committed: `sips --resampleWidth 320` and a re-encode at quality ~62, which lands it beside the others at 320 px wide and 8–15 KB. A raw download is 850 px and twice the weight, and the cards are served over a phone connection.
+A frame brought in from the open set is normalised before it is committed: `sips --resampleWidth 320` and a re-encode at quality ~62, which lands it beside the others at 320 px wide and 5–15 KB. A raw download is 850 px and twice the weight, and the cards are served over a phone connection.
 
 The build collects keys from the file names (`IMG_KEYS` in `build.py` strips the last six characters), so any new key works with no other edit. **A key is in use if it appears in `data/program.py` or in `data/terms.py`:** a glossary term illustrates itself with `ref:<key>`, which points at the same frames — that is why `Cable_Crossover` and `Leg_Press`, on no card at all, must stay: a check against `DAYS` alone would call them orphans. Dropping `img` altogether is not the answer: every exercise has an illustration, and a card without a frame is the only one of its kind on the screen.
 
 ### Term format in `data/terms.py`
 
-A tuple `(key, title, explanation, image key or None, [patterns])`. The patterns are regular expressions that highlight the term inside the card text; `\w` in them is replaced by a character class that includes Cyrillic.
+A tuple `(key, title, explanation, image key or None, [patterns])`. The patterns are regular expressions that highlight the term inside the card text; `\w` in them is replaced by a character class that includes Cyrillic. Matching ignores case, and the patterns of all terms are tried longest first, so where two terms' patterns overlap the longer pattern takes the word.
 
 Terms are highlighted in the cue and in the day's focus text, **never in a card name**: a highlighted term is a `<button>`, and inside `.name` it broke the title's colour, size and typeface on iOS. So a name carries no clickable word — keep the term the card needs in its cue instead, and note that each term highlights only once per day, first occurrence wins.
 
 A pattern must belong to one term only: the same pattern on two terms makes `whichTerm()` resolve by list order, so the highlighted word opens whichever term comes first.
 
-A glossary photo is 360 × 270 (4:3), JPEG, 9–20 KB. A term with its own image key gets `object-fit: cover` on its card automatically — `openTerm()` in `template.html` sets it; a `ref:` term shows that exercise's start frame, uncropped. A catalogue render arrives square on white: pad it to 4:3 with white (`sips -p <h> <w> --padColor FFFFFF`) rather than crop it — cropping a square render takes the top off a tall machine — then `--resampleWidth 360`.
+A glossary photo is 360 × 270 (4:3), JPEG, 7–20 KB. A term with its own image key gets `object-fit: cover` on its card automatically — `openTerm()` in `template.html` sets it; a `ref:` term shows that exercise's start frame, uncropped. A catalogue render arrives square on white: pad it to 4:3 with white (`sips -p <h> <w> --padColor FFFFFF`) rather than crop it — cropping a square render takes the top off a tall machine — then `--resampleWidth 360`.
 
 A bare `http(s)://` address inside the explanation becomes a link when the term card is opened; the visible label is the domain. That is the only markup allowed in an explanation — everything else is escaped.
 
