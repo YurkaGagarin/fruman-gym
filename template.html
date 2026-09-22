@@ -45,15 +45,10 @@ body{
 .block{background:var(--surface);max-width:640px;margin:0 auto}
 .wrap{max-width:640px;margin:0 auto;padding:0 16px}
 
-header{padding:calc(28px + env(safe-area-inset-top)) 16px 24px;border-bottom:2px solid var(--accent-solid)}
-h1{
-  font-family:'Archivo Narrow',sans-serif;font-weight:700;
-  font-size:clamp(30px,9vw,42px);line-height:1.03;text-transform:uppercase;
-  color:var(--text);margin:0;
-}
-h1 em{font-style:normal;color:var(--accent)}
+/* the page has no visible title; the heading stays for screen readers */
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-nav{position:sticky;top:0;padding-top:env(safe-area-inset-top);z-index:10;background:var(--bg);padding:10px 0;
+nav{position:sticky;top:0;z-index:10;background:var(--bg);padding:calc(10px + env(safe-area-inset-top)) 0 10px;
   border-bottom:1px solid var(--line)}
 .tabs{display:flex;gap:8px;max-width:640px;margin:0 auto;padding:0 16px}
 .tab{
@@ -446,9 +441,7 @@ footer p{margin:0 0 6px;font-size:var(--fs-s)}
 <body>
 <div class="page">
 
-  <header class="block">
-    <h1>Грудь, плечи,<br><em>руки</em></h1>
-  </header>
+  <h1 class="vh">Программа тренировок</h1>
 
   <nav>
     <div class="tabs" role="tablist">
@@ -1837,7 +1830,6 @@ const boot = safe('запуск', async function(){
   paintTabs();
   paintProgress();
   render();
-  markStatic(document.querySelector('header'));
   markStatic(document.querySelector('.notes'));
   if(!canPersist) showBanner();   // говорим только о беде: когда веса сохраняются, плашки нет
 });
