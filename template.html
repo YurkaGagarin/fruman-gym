@@ -1352,6 +1352,8 @@ function tickFn(){
   tbar.classList.add('done');
   tRunning(false);
   returnToEx();
+  // закончившийся отсчёт показывать незачем: карточка уже под ним, экран отдаём сразу
+  showFull(false);
   setTimeout(() => { if(!tTick) stopTimer(); }, 6000);
 }
 function startPhases(phases, hint){
