@@ -50,7 +50,7 @@ The tests read the built `index.html`, not the template. So an edit to `template
 
 ### Exercise format in `data/program.py`
 
-The keys are short: `n` — name, `l` — the sets line («4 × 8–12»), `c` — cue, `img` — illustration key from `assets/exercises/` without the frame suffix (`_0` start, `_1` finish) — see **Illustrations** below, `rest` — rest in seconds, `t` — duration for cardio, `hold` — hold, `iv` — intervals `[work, easy, rounds]`, `w: 1` — a warm-up exercise, `wt: 1` — a warm-up that still carries a weight, `nw: 1` — a strength exercise done with body weight only, so it gets no weight field.
+The keys are short: `n` — name, `l` — the sets line («4 × 8»), `c` — cue, `img` — illustration key from `assets/exercises/` without the frame suffix (`_0` start, `_1` finish) — see **Illustrations** below, `rest` — rest in seconds, `t` — duration for cardio, `hold` — hold, `iv` — intervals `[work, easy, rounds]`, `w: 1` — a warm-up exercise, `wt: 1` — a warm-up that still carries a weight, `nw: 1` — a strength exercise done with body weight only, so it gets no weight field, `s: 'ok'` — the machine is confirmed by its sticker (rule 2); any other value shows «? проверить в зале» on the card.
 
 An exercise counts as a strength exercise (the one that gets set marks) when it has none of `w`, `t`, `iv` — this check is duplicated in the code and in the tests.
 
@@ -90,7 +90,7 @@ Terms are highlighted in the cue and in the day's focus text, **never in a card 
 
 A pattern must belong to one term only: the same pattern on two terms makes `whichTerm()` resolve by list order, so the highlighted word opens whichever term comes first.
 
-A glossary photo is 360 × 270 (4:3), JPEG, 9–20 KB, and the term carries `photo: true`, so the card shows it with `object-fit: cover`. A catalogue render arrives square on white: pad it to 4:3 with white (`sips -p <h> <w> --padColor FFFFFF`) rather than crop it — cropping a square render takes the top off a tall machine — then `--resampleWidth 360`.
+A glossary photo is 360 × 270 (4:3), JPEG, 9–20 KB, A term with its own image key gets `object-fit: cover` on its card automatically — `build.py` sets it; a `ref:` term shows that exercise's start frame, uncropped. A catalogue render arrives square on white: pad it to 4:3 with white (`sips -p <h> <w> --padColor FFFFFF`) rather than crop it — cropping a square render takes the top off a tall machine — then `--resampleWidth 360`.
 
 A bare `http(s)://` address inside the explanation becomes a link when the term card is opened; the visible label is the domain. That is the only markup allowed in an explanation — everything else is escaped.
 
