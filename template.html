@@ -849,7 +849,13 @@ function markedSets(p){
   let n = 0;
   Object.keys(p.sets || {}).forEach(k => {
     const arr = p.sets[k];
-    if(Array.isArray(arr)) arr.forEach(v => { if(v) n++; });
+    if(!Array.isArray(arr)) return;
+    // разминку и кардио отмечает отсчёт, но подходами дня они не считаются:
+    // тот же фильтр, что в totalSets, иначе выйдет «отмечено 26 из 23»
+    const parts = String(k).split(':');
+    const e = (DAYS[parts[0]] || {ex: []}).ex[parts[1]];
+    if(!e || e.w || e.t || e.iv) return;
+    arr.forEach(v => { if(v) n++; });
   });
   return n;
 }
@@ -1275,6 +1281,19 @@ function showFull(on){
    в зале дальше нужен следующий подход, а не то место списка, где человек стоял.
    По кнопке «Стоп» не вызывается: это осознанный выход, экран дёргать незачем */
 function armReturn(i){ tEx = i; tExDay = current; }
+/* Разминку и кардио отмечает сам отсчёт: квадратиков подходов у них нет, а рамка
+   «сделано» нужна. По «Стоп» не вызывается — брошенная на середине разминка
+   сделанной не считается */
+function markTimedDone(){
+  if(tEx < 0 || tExDay !== current) return;          // день переключили — чужой день не трогаем
+  const e = DAYS[safeDay(current)].ex[tEx];
+  if(!e || !(e.w || e.t || e.iv)) return;            // у силовых отметка своя, по квадратикам
+  const key = current + ':' + tEx;
+  const arr = Array.isArray(state[key]) && state[key].length ? state[key] : (state[key] = [false]);
+  arr.fill(true);
+  touchProgress();
+  render();
+}
 function returnToEx(){
   if(tEx < 0 || tExDay !== current) return;      // день переключили — не дёргаем экран
   if(!exview.hidden && exIdx === tEx) return;    // уже на нужной карточке
@@ -1352,6 +1371,7 @@ function tickFn(){
   beep(3, 990);
   tbar.classList.add('done');
   tRunning(false);
+  markTimedDone();
   returnToEx();
   // закончившийся отсчёт показывать незачем: карточка уже под ним, экран отдаём сразу
   showFull(false);
@@ -1595,7 +1615,8 @@ const render = safe('отрисовка', function(){
     a11y.textContent = 'Открыть упражнение ' + e.n;
     a11y.addEventListener('click', () => openEx(i));
     card.appendChild(a11y);
-    if(!e.w && !e.t && !e.iv && state[key].every(Boolean)) card.classList.add('done');
+    // рамку получают и разминка с кардио: их отмечает дошедший до конца отсчёт
+    if(state[key].length && state[key].every(Boolean)) card.classList.add('done');
     app.appendChild(card);
   });
 });

@@ -4,6 +4,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 The repository is written in English, the conversation is in Russian: the user writes in Russian and expects Russian replies. UI strings, test output and exercise data stay in Russian — quote them verbatim, never translate them in code.
 
+## Where the rest is written down
+
+- `README.md` — the file tree and the build commands, in Russian, for a human visitor.
+- `HANDOFF.md` — live state, open tasks, and what the user has said that the code does not
+  record. Outside git: the repository is public and the file carries personal detail. Read it
+  when a session starts.
+- `docs/gym-check.md` — questions only the user can answer standing in the gym. Work that
+  depends on an answer waits there; the assets named in it stay untouched until he replies.
+- `docs/research/` — the two studies this file points at: `audio-session-matrix.md` (signal
+  and screen lock) and `gym-photos.md` (catalogue renders, which model is which machine).
+
 ## Build and checks
 
 ```bash
