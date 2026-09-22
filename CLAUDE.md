@@ -7,11 +7,9 @@ The repository is written in English, the conversation is in Russian: the user w
 ## Where the rest is written down
 
 - `README.md` — the file tree and the build commands, in Russian, for a human visitor.
-- `HANDOFF.md` — live state, open tasks, and what the user has said that the code does not
-  record. Outside git: the repository is public and the file carries personal detail. Read it
-  when a session starts.
-- `docs/gym-check.md` — questions only the user can answer standing in the gym. Work that
-  depends on an answer waits there; the assets named in it stay untouched until he replies.
+- `HANDOFF.md` — who the user is, decisions not to reopen, and how he communicates: what the
+  code does not record. Outside git: the repository is public and the file carries personal
+  detail. Read it when a session starts.
 - `docs/research/` — the two studies this file points at: `audio-session-matrix.md` (signal
   and screen lock) and `gym-photos.md` (catalogue renders, which model is which machine).
 
@@ -98,7 +96,7 @@ A bare `http(s)://` address inside the explanation becomes a link when the term 
 
 1. **Run all four test suites after any change.** They have already caught a variable used before initialisation, the whole app crashing on a single broken journal entry, and the timer drifting out of sync with the set mark.
 2. **Machines are identified only by the sticker on the machine itself,** never by how they look — that mistake has been made twice already. The reference is the text on the sticker (LEG PRESS, LAT MACHINE, ARM CURL, KNEELING EASY CHIN DIP, PECTORAL / REVERSE FLY), not the machine number. No sticker in the photo — ask for a photo of the sticker instead of guessing. **Posture is asked about, not read off a photograph.** The sticker's seating pictogram and a catalogue photo of the same model (`technogym.com` serves 200 to a request carrying a browser `User-Agent`; see `docs/research/gym-photos.md`) show the hardware, not which way the user faces: on the Arm Curl a pad, a headrest and two side pads read as a preacher bench from the front and as a backrest from behind, and the wrong reading was published once already. Use the photographs to name the parts, and ask the user for the one sentence that says which of them his back, head and arms touch. Read a gym photo zoomed: there is no `PIL` on this machine, `sips -c <h> <w> --cropOffset <top> <left>` followed by `--resampleWidth` is what makes a sticker pictogram legible.
-3. **Never inline images into `index.html`.** When they were stored as base64 the file weighed 2.1 MB and the preview cut it off in the middle of the script. It is 114 KB now.
+3. **Never inline images into `index.html`.** When they were stored as base64 the file weighed 2.1 MB and the preview cut it off in the middle of the script. It is under 120 KB now.
 4. **The repository is public:** no recognisable bystanders in the gym photos.
 5. **Check the programme's numbers and facts against authoritative sources** before entering them.
 6. **The four suites do not see the interface.** They read the built `index.html` and check behaviour, not layout: a highlighted term wrecking a card title and a weight field that looked empty were both found by the user on the phone while all four suites were green. After any change to the interface, write a throwaway jsdom script that prints what actually landed on the card — the attributes, the values, the classes, the text — and read that instead of assuming. Put it in `tests/` next to the others, because `jsdom` does not resolve from anywhere else, and delete it once it has been run. Four mechanics that cost a run each: a top-level `const` never lands on `window`, so `win.GLOSS` is `undefined` and the script dies on its first line — read those names with `win.eval('GLOSS')`; without a `win.storage` mock in `beforeParse` the day never renders and every count comes back zero, which reads as a defect rather than as a broken harness; `getComputedStyle` does not resolve `var()` inside the `border` shorthand and returns `medium none`, so compare an element against the neighbour it is supposed to match instead of against an expected value; and a number changed in `data/` is usually written out in prose somewhere too — the page header promised «отдых 60–90 сек» long after no such rest existed, and no `grep` for `rest` would ever have shown it.
@@ -151,4 +149,4 @@ A confirmed publication is not yet a visible change on the phone. The app sits o
 
 ## Communication
 
-Short and to the point: the answer first, the details after. A yes/no question starts with «yes» or «no». Say what changed — restating the work and explaining what things are for are both unasked. A useful observation goes in one line at the end, and only when it changes a decision. When there is any doubt about the task, ask instead of filling the gap with a guess.
+A yes/no question starts with «yes» or «no». Say what changed — restating the work and explaining what things are for are both unasked. A useful observation goes in one line at the end, and only when it changes a decision. When there is any doubt about the task, ask instead of filling the gap with a guess.
