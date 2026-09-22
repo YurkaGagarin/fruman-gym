@@ -8,7 +8,7 @@
 
 С браузерным `User-Agent` сайт отвечает 200.
 
-1. `https://www.technogym.com/en-IL/products-sitemap.xml` — весь каталог, около сотни
+1. `https://www.technogym.com/en-IL/products-sitemap.xml` — весь каталог, около трёхсот
    адресов вида `/en-IL/product/<slug>_<код>.html`.
 2. Картинки на странице товара лежат на `webapi-prod.technogym.com/dw/image/v2/.../product/<код>/<имя>.jpg`,
    размер задаётся параметром `?sw=900`. Рендер квадратный, на белом фоне.
