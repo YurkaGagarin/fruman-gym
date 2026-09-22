@@ -45,6 +45,8 @@ The keys are short: `n` — name, `l` — the sets line («4 × 8–12»), `c` �
 
 An exercise counts as a strength exercise (the one that gets set marks) when it has none of `w`, `t`, `iv` — this check is duplicated in the code and in the tests.
 
+**`rest` cannot be set to nothing.** The countdown after a set mark starts as `e.rest || 90`, so `rest: 0` and a missing `rest` both give ninety seconds. A movement that should flow straight into the next one without a pause needs a new flag and a code change — which is one of the two reasons the day-3 superset was split into two ordinary exercises instead of being kept as a pair.
+
 **The weight field is decided separately**, by `hasWeight()`: every strength exercise has one except those marked `nw: 1`, and so does a warm-up marked `wt: 1` — a warm-up set done on a stack machine, where the number set on the stack is worth remembering from one session to the next. `wt` changes nothing else: the card keeps its countdown button, stays under «Разминка», gets no set square and does not move the day's set count. The weight lands in the journal under the usual `day:index` key, so history, «прошлый раз», export and import pick it up with no extra code. In the full-screen card the countdown button then moves to its own line (`.extimer.full`) instead of squeezing in beside the input.
 
 **The weight field holds today's entry only** — one record per exercise per date. At the start of a session it is therefore empty, which already read once as «журнал потерялся»; the previous weight is shown greyed out as the field's placeholder and in full behind the «прошлый раз N кг» button. Never write a record the user did not type: prefilling the field with the last weight and saving it would fill the journal with days he never trained, and the journal keeps only the last 12 dates per exercise.
@@ -67,7 +69,7 @@ The whole set is one JSON file — `raw.githubusercontent.com/yuhonas/free-exerc
 
 A frame brought in from the open set is normalised before it is committed: `sips --resampleWidth 320` and a re-encode at quality ~62, which lands it beside the others at 320 px wide and 8–15 KB. A raw download is 850 px and twice the weight, and the cards are served over a phone connection.
 
-The build collects keys from the file names (`IMG_KEYS` in `build.py` strips the last six characters), so any new key works with no other edit. Dropping `img` altogether is not the answer: every one of the 33 exercises has an illustration, and a card without a frame is the only one of its kind on the screen.
+The build collects keys from the file names (`IMG_KEYS` in `build.py` strips the last six characters), so any new key works with no other edit. **A key is in use if it appears in `data/program.py` **or** in `data/terms.py`:** a glossary term illustrates itself with `ref:<key>`, which points at the same frames. Six orphan frames were deleted on 13 September 2026 after checking both files; `Cable_Crossover` and `Leg_Press` sit on no card at all and are kept alive only by that `ref:`. Dropping `img` altogether is not the answer: every one of the 33 exercises has an illustration, and a card without a frame is the only one of its kind on the screen.
 
 ### Term format in `data/terms.py`
 
