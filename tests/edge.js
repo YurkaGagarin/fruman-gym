@@ -85,6 +85,23 @@ const setVal = (el, v) => { el.value = v; el.dispatchEvent(new (el.ownerDocument
   if (stored['0:0'] && stored['0:0'].some(x => x.w > 1000)) warn('в журнал попал вес больше 1000 кг');
   if (env.errors.length) fail('ошибки при вводе мусора: ' + env.errors.join(' | ')); else ok('без ошибок');
 
+  console.log('\n=== 13а. ВЕС ЗАПИСАН ДО ВЫХОДА ИЗ ПРИЛОЖЕНИЯ ===');
+  for (const how of ['visibilitychange', 'pagehide']) {
+    const e2 = boot(); await tick(140);
+    click(e2.doc.querySelectorAll('#app .card')[IDX]); await tick(40);
+    setVal(e2.doc.getElementById('exweight'), '42'); await tick(20);
+    if (how === 'visibilitychange') {
+      Object.defineProperty(e2.doc, 'hidden', { configurable: true, get: () => true });
+      e2.doc.dispatchEvent(new e2.win.Event('visibilitychange'));
+    } else e2.win.dispatchEvent(new e2.win.Event('pagehide'));
+    await tick(20);   // меньше 400 мс отложенной записи
+    const log = JSON.parse(e2.store['weightlog:v1'] || '{}');
+    const got = (log['0:' + IDX] || []).map(x => x.w);
+    if (got.includes(42)) ok(how + ': вес 42 в хранилище сразу, без ожидания 400 мс');
+    else fail(how + ': вес не записан до ухода, в журнале ' + JSON.stringify(got));
+    if (e2.errors.length) fail(how + ': ошибки ' + e2.errors.join(' | '));
+  }
+
   console.log('\n=== 14. ГОНКИ: БЫСТРЫЕ НАЖАТИЯ ===');
   const sets2 = env.doc.querySelectorAll('#exsets .exset');
   for (let i = 0; i < 12; i++) click(sets2[0]);

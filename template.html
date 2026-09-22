@@ -812,6 +812,10 @@ function saveLog(){
     }
   }, 400);
 }
+// смахнули приложение сразу после ввода веса — отложенная запись не успеет сработать
+function flushPending(){ if(saveTimer) flushLog(); }
+document.addEventListener('visibilitychange', () => { if(document.hidden) flushPending(); });
+window.addEventListener('pagehide', flushPending);
 function showBanner(){
   const b = document.getElementById('banner');
   if(!b) return;
