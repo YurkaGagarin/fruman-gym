@@ -34,7 +34,7 @@ The summary lines of all four suites at once, without scrolling the output:
 for t in basic edge progress audio; do printf '%-9s ' "$t"; node tests/$t.js 2>&1 | grep -E 'провалов:|ошибок:' | tail -1; done
 ```
 
-**A countdown cannot be waited out in a test.** Rest is 60–90 seconds and the suites run on real timers. Start the timer through the interface, then replace `win.Date.now` with a function returning an hour ahead: the next tick (every 200 ms) finds the phase over and runs the whole ending — signal, «готово», the return to the card. Restore `Date.now` immediately afterwards, the rest of the app reads the same clock.
+**A countdown cannot be waited out in a test.** Rest is 60 seconds and the suites run on real timers. Start the timer through the interface, then replace `win.Date.now` with a function returning an hour ahead: the next tick (every 200 ms) finds the phase over and runs the whole ending — signal, «готово», the return to the card. Restore `Date.now` immediately afterwards, the rest of the app reads the same clock.
 
 **Exit codes cannot be trusted:** `basic`, `edge` and `progress` exit with zero even when checks fail; only `audio` returns a non-zero code. The result has to be read by eye from the last line: «провалов: N» for `basic`, `edge`, `audio` and «ошибок: N» for `progress`.
 
@@ -56,7 +56,7 @@ The keys are short: `n` — name, `l` — the sets line («4 × 8–12»), `c` �
 
 An exercise counts as a strength exercise (the one that gets set marks) when it has none of `w`, `t`, `iv` — this check is duplicated in the code and in the tests.
 
-**`rest` cannot be set to nothing.** The countdown after a set mark starts as `e.rest || 90`, so `rest: 0` and a missing `rest` both give ninety seconds. A movement that should flow straight into the next one without a pause needs a new flag and a code change — which is one of the two reasons the day-3 superset was split into two ordinary exercises instead of being kept as a pair.
+**`rest` cannot be set to nothing.** The countdown after a set mark starts as `e.rest || 60`, so `rest: 0` and a missing `rest` both give sixty seconds. A movement that should flow straight into the next one without a pause needs a new flag and a code change — which is one of the two reasons the day-3 superset was split into two ordinary exercises instead of being kept as a pair.
 
 **The weight field is decided separately**, by `hasWeight()`: every strength exercise has one except those marked `nw: 1`, and so does a warm-up marked `wt: 1` — a warm-up set done on a stack machine, where the number set on the stack is worth remembering from one session to the next. `wt` changes nothing else: the card keeps its countdown button, stays under «Разминка», gets no set square and does not move the day's set count. The weight lands in the journal under the usual `day:index` key, so history, «прошлый раз», export and import pick it up with no extra code. In the full-screen card the countdown button then moves to its own line (`.extimer.full`) instead of squeezing in beside the input.
 

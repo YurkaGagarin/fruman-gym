@@ -427,7 +427,7 @@ footer p{margin:0 0 6px;font-size:13px}
   <header class="block">
     <p class="eyebrow">Icon Fitness Модиин · Technogym</p>
     <h1>Грудь, плечи,<br><em>руки</em></h1>
-    <p class="sub">3 раза в неделю · около <b>80 минут</b> · отдых <b>60–90 сек</b> · между тренировками минимум <b>один день</b></p>
+    <p class="sub">3 раза в неделю · около <b>80 минут</b> · отдых <b>60 сек</b> · между тренировками минимум <b>один день</b></p>
   </header>
 
   <nav>
@@ -1075,7 +1075,7 @@ function renderEx(i){
       } else if(arr[si] && !e.w){
         const done = arr.filter(Boolean).length;
         armReturn(i);
-        startTimer(e.rest || 90, 'отдых', e.n + ' · дальше подход ' + (done + 1) + ' из ' + arr.length);
+        startTimer(e.rest || 60, 'отдых', e.n + ' · дальше подход ' + (done + 1) + ' из ' + arr.length);
       }
     });
     box.appendChild(b);
