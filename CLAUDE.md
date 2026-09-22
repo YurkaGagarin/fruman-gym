@@ -8,6 +8,7 @@ The repository is written in English, the conversation is in Russian: the user w
 - `HANDOFF.md` — who the user is, decisions not to reopen, and how he communicates: what the
   code does not record. Outside git: the repository is public and the file carries personal
   detail. Read it when a session starts.
+- `docs/device.md` — Web Inspector on the iPhone, and how to write a measurement or a check for the user's phone. Read it before any on-device run or instruction.
 - `docs/research/` — the two studies this file points at: `audio-session-matrix.md` (signal
   and screen lock) and `gym-photos.md` (catalogue renders, which model is which machine).
 
@@ -126,24 +127,6 @@ The app lives on an iPhone as a home screen icon, and the shell is WebKit.
 - **The home screen cache.** An app launched from the icon holds on to the page it loaded earlier. Before testing a new build on the device it has to be closed from the app switcher and opened again — otherwise the old code is what gets tested.
 - **The file preview inside the Claude chat has neither network nor persistent storage.** Weights are only saved on the published site.
 - **Browser storage** is unavailable to pages served from the `file:` scheme — saving weights can only be checked over `https://`.
-
-## Debugging on the device
-
-Safari Web Inspector gives a console into the live app opened from the home screen. It is the only way to see the real `actx.state`, `navigator.audioSession.type` and the actual reason for a rejection instead of guessing.
-
-On the iPhone: Settings → Apps → Safari → Advanced → Web Inspector (on iOS 18 and later, per-app settings live under «Apps»). Connect by cable, unlock the phone, answer «Trust».
-
-On the Mac: Safari → Settings → Advanced → «Show features for web developers», then in the menu bar Develop → the iPhone's name → the app's entry. The app has to be in the foreground at the moment of connecting; the connection survives backgrounding but breaks when the app is closed from the switcher.
-
-The console has access to the script's top-level names: `cfg()`, `actx`, `wake`, `bgAudio`, `bgUrl`, `beep()`, `startTimer()`. Any measurement that needs a gesture must be wrapped in a one-shot handler on `touchend` and `click` in the capture phase, otherwise the result is false.
-
-## Testing on the device
-
-**A measurement is written out step by step, an ordinary check is not.** A measurement — anything where an omitted step invalidates the result: audio and `wakeLock` runs, a Web Inspector session, a console command, a protocol that has to be repeated identically later. There nothing is left implied: what has to be playing, whether the timer needs starting by hand, exactly where to tap, what to listen for, what not to touch.
-
-A check of a published change is the opposite: name what to look at and what would count as wrong, in a few lines. The user knows his own app — «посмотри карточку 03 во втором дне: под кнопкой отсчёта должна быть строка с весом» is the right size, a numbered list of taps is not. The one step worth keeping even here is closing the app from the switcher, because the icon serves the old page. Full detail on a practical check only when the user asks for it.
-
-Phone settings that affect the measurements: auto-lock is normally set to «Никогда» (it has to be set to 30 seconds to prove that the screen is being held), Low Power Mode is off. The set mark in a card is a square, not a circle.
 
 ## Publishing
 
