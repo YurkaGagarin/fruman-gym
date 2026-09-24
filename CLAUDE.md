@@ -55,7 +55,7 @@ The tests read the built `index.html`, not the template. So an edit to `template
 
 ### Exercise format in `data/program.py`
 
-**Position is identity.** Set marks and the weight journal are keyed `day:index`, so inserting, removing or reordering an exercise hands every later card its neighbour's weight history; append at the end of the day, or migrate the journal. The number of set squares is the leading number of `l` (`parseInt`, 3 if there is none). A day is `{title, focus, ex}`, and `focus` gets glossary highlighting like a cue. Warm-ups form one block at the top of `ex`: the «Разминка» and «Тренировка» headers go in at the first of each, so a warm-up placed later lands under «Тренировка».
+**Position is identity.** Set marks and the weight journal are keyed `day:index`, so inserting, removing or reordering an exercise hands every later card its neighbour's weight history; append at the end of the day, or migrate the journal. The number of set squares is the leading number of `l` (`parseInt`, 3 if there is none). A day is `{title, ex}`; the title stands alone, the user had the paragraph under it removed. Warm-ups form one block at the top of `ex`: the «Разминка» and «Тренировка» headers go in at the first of each, so a warm-up placed later lands under «Тренировка».
 
 The keys are short: `n` — name, `l` — the sets line («4 × 8»), `c` — cue, `img` — illustration key from `assets/exercises/` without the frame suffix (`_0` start, `_1` finish) — see **Illustrations** below, `rest` — rest in seconds, `t` — countdown length for warm-ups and cardio, `hold` — hold, `iv` — intervals `[work, easy, rounds]`, `w: 1` — a warm-up exercise, `wt: 1` — a warm-up that still carries a weight, `nw: 1` — a strength exercise done with body weight only, so it gets no weight field, `s: 'ok'` — the machine is confirmed by its sticker (rule 2); a missing or any other value shows «? проверить в зале» on the card. A confirmed machine carries no label at all — the user asked for the mark only where something is wrong.
 
@@ -93,7 +93,7 @@ The build collects keys from the file names (`IMG_KEYS` in `build.py` strips the
 
 A tuple `(key, title, explanation, image key or None, [patterns])`. The patterns are regular expressions that highlight the term inside the card text; `\w` in them is replaced by a character class that includes Cyrillic. Matching ignores case, and the patterns of all terms are tried longest first, so where two terms' patterns overlap the longer pattern takes the word.
 
-Terms are highlighted in the cue and in the day's focus text, **never in a card name**: a highlighted term is a `<button>`, and inside `.name` it broke the title's colour, size and typeface on iOS. So a name carries no clickable word — keep the term the card needs in its cue instead, and note that each term highlights only once per day, first occurrence wins.
+Terms are highlighted in the cue only, **never in a card name**: a highlighted term is a `<button>`, and inside `.name` it broke the title's colour, size and typeface on iOS. So a name carries no clickable word — keep the term the card needs in its cue instead, and note that each term highlights only once per day, first occurrence wins.
 
 A pattern must belong to one term only: the same pattern on two terms makes `whichTerm()` resolve by list order, so the highlighted word opens whichever term comes first.
 
